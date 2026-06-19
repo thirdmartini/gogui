@@ -102,7 +102,13 @@ func (c *GenericCanvas) DrawTextWrapped(x, y, w, s int, text string, font *fonts
 
 }
 
-func (im *GenericCanvas) DrawImage(x, y int, image image.Image) {
+func (c *GenericCanvas) DrawImage(x, y int, image image.Image) {
+}
+
+func (c *GenericCanvas) ClipSet(x, y, w, h int) {
+}
+
+func (c *GenericCanvas) ClipReset() {
 }
 
 func abs(x int) int {

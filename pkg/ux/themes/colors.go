@@ -17,6 +17,8 @@ var (
 	ColorGraphTicks  color.Color
 
 	ColorMenuBackground color.Color
+
+	ColorWindowBackground color.Color
 )
 
 type ThemeColors map[string]string

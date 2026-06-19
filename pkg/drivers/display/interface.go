@@ -14,4 +14,5 @@ const (
 type Display interface {
 	Draw(im *image.RGBA) error
 	Size() image.Point
+	Close() error
 }

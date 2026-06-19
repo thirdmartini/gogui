@@ -1,4 +1,4 @@
-package ux
+package themes
 
 import (
 	"github.com/thirdmartini/gogui/pkg/ux/canvas/fonts"
@@ -31,12 +31,4 @@ func NewFontCache() *FontCache {
 	return &FontCache{
 		fonts: make(map[string]*fonts.Font),
 	}
-}
-
-func Font(name string) *fonts.Font {
-	return DefaultCache.Font(name)
-}
-
-func LoadFont(name string, path string, points float64) error {
-	return DefaultCache.LoadFont(name, path, points)
 }

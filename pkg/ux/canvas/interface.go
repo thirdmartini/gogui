@@ -40,4 +40,7 @@ type Canvas interface {
 	//Show()
 	ColorPalette() color.Palette
 	//Invalidate()
+
+	ClipSet(x, y, w, h int)
+	ClipReset()
 }

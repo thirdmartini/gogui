@@ -1,6 +1,7 @@
 package widgets
 
 import (
+	"github.com/thirdmartini/gogui/pkg/ux"
 	"github.com/thirdmartini/gogui/pkg/ux/canvas"
 	"github.com/thirdmartini/gogui/pkg/ux/canvas/color"
 	"github.com/thirdmartini/gogui/pkg/ux/canvas/fonts"
@@ -35,6 +36,10 @@ func (t *TextLabel) Draw(canvas canvas.Canvas) {
 	if t.visible {
 		canvas.DrawText(t.x, t.y, t.text, t.Font, t.Color)
 	}
+}
+
+func (t *TextLabel) OnEvent(event *ux.Event) bool {
+	return false
 }
 
 func (t *TextLabel) Visible(show bool) {

@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"path"
 
-	"github.com/thirdmartini/gogui/pkg/ux"
 	"github.com/thirdmartini/gogui/pkg/ux/canvas/fonts"
 )
 
@@ -34,7 +33,7 @@ func LoadFonts() error {
 
 	for k, v := range defaultFonts {
 		font := path.Join(ThemePath, v.Font)
-		if err := ux.LoadFont(k, font, v.Size); err != nil {
+		if err := DefaultCache.LoadFont(k, font, v.Size); err != nil {
 			return err
 		}
 	}
@@ -43,7 +42,7 @@ func LoadFonts() error {
 }
 
 func Font(name string) *fonts.Font {
-	if font := ux.Font(name); font != nil {
+	if font := DefaultCache.Font(name); font != nil {
 		return font
 	}
 	panic(fmt.Sprintf("trying to load font name(%s) that was not preloaded", name))

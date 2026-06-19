@@ -3,9 +3,10 @@ package canvas
 import (
 	"image"
 
+	"github.com/fogleman/gg"
+
 	"github.com/thirdmartini/gogui/pkg/ux/canvas/color"
 	"github.com/thirdmartini/gogui/pkg/ux/canvas/fonts"
-	"github.com/fogleman/gg"
 )
 
 type CanvasGG struct {
@@ -102,6 +103,15 @@ func (c *CanvasGG) DrawRoundedRect(x1, y1, w, h, r int, frame color.Color, fill 
 
 func (c *CanvasGG) DrawImage(x, y int, im image.Image) {
 	c.gg.DrawImage(im, x, y)
+}
+
+func (c *CanvasGG) ClipSet(x, y, w, h int) {
+	c.gg.DrawRectangle(float64(x), float64(y), float64(w), float64(h))
+	c.gg.Clip()
+}
+
+func (c *CanvasGG) ClipReset() {
+	c.gg.ResetClip()
 }
 
 func (c *CanvasGG) DrawCircle(x, y, r, w int, color color.Color, fill color.Color) {
