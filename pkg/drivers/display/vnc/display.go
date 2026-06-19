@@ -29,6 +29,9 @@ type Display struct {
 
 	rotation int
 
+	pointerX, pointerY int
+	buttons            uint8
+
 	events chan interface{}
 }
 
@@ -140,10 +143,22 @@ func (r *Display) Listen(OnEvent func(ev *ux.Event)) error {
 					}
 					OnEvent(ev)
 				} else {
-					log.Printf("event: %#v", e)
+					log.Printf("kb event: %#v", ve)
 				}
 			}
 		case PointerEvent:
+			ve := e.(PointerEvent)
+
+			r.pointerX = int(ve.X)
+			r.pointerY = int(ve.Y)
+
+			if r.buttons != ve.ButtonMask {
+				if ve.ButtonMask == 0 {
+					OnEvent(ux.NewTouchEvent(0, r.pointerX, r.pointerY))
+				}
+				r.buttons = ve.ButtonMask
+			}
+
 		default:
 		}
 

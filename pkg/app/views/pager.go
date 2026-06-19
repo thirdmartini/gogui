@@ -28,7 +28,8 @@ func (p *Pager) Next() Window {
 	if p.idx >= len(p.views) {
 		p.idx = 0
 	}
-	return p.views[p.idx]
+	p.current = p.views[p.idx]
+	return p.current
 }
 
 func (p *Pager) Prev() Window {
@@ -36,7 +37,8 @@ func (p *Pager) Prev() Window {
 	if p.idx < 0 {
 		p.idx = len(p.views) - 1
 	}
-	return p.views[p.idx]
+	p.current = p.views[p.idx]
+	return p.current
 }
 
 func (p *Pager) Select(idx int) {
@@ -56,14 +58,16 @@ func (p *Pager) Add(w Window) {
 
 func (p *Pager) OnEvent(event *ux.Event) bool {
 	switch event.Type {
+	case ux.EventTypeButton, ux.EventTypeTouch:
+		return p.current.OnEvent(event)
 
 	case ux.EventTypeKey:
 		switch uint8(event.Kind) {
 		case ux.KeyPressUp: // Previous menu
-			p.current = p.Prev()
+			p.Prev()
 
 		case ux.KeyPressDown: // Next Menu
-			p.current = p.Next()
+			p.Next()
 
 		default:
 		}

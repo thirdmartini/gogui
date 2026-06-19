@@ -27,6 +27,7 @@ func (tc ThemeColors) toColor(p color.Palette, c string) color.Color {
 	col, ok := tc[c]
 	if ok {
 		if cnt, err := fmt.Sscanf(col, "#%02x%02x%02x", &r, &g, &b); err == nil && cnt == 3 {
+			fmt.Printf("Loaded color [%s] = [%d, %d, %d]\n", c, r, g, b)
 			return p.NewRGB8(r, g, b)
 		}
 	}

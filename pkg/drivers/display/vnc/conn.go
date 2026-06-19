@@ -219,7 +219,6 @@ func (c *Conn) serve() {
 
 	for {
 		cmd := c.readByte("6.4:client-server-packet-type")
-		//log.Printf("got command type %d from client", int(cmd))
 		switch cmd {
 		case cmdSetPixelFormat:
 			c.handleSetPixelFormat()
@@ -231,6 +230,10 @@ func (c *Conn) serve() {
 			c.handlePointerEvent()
 		case cmdKeyEvent:
 			c.handleKeyEvent()
+		case cmdClientCutText:
+			//c.handleClientCutText()
+			c.failf("unsupported command type %d (cut text) from client", int(cmd))
+
 		default:
 			c.failf("unsupported command type %d from client", int(cmd))
 		}

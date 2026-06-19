@@ -19,7 +19,7 @@ If you copy the demo binary someplace else make sure you copy the assets folder 
 ## VNC Mode
 
 The demo comes with very basic VNC server, but its functional enough to run the demo and test the UI without running 
-on an RPI.
+on an RPI.  
 
 ![VNC Mode](assets/vnc.png)
 
@@ -31,6 +31,14 @@ roland@rpi go-gui % ./build/demo --driver=vnc
 ```
 I've tested this with TigerVNC on MacOS.  It does NOT work with the builtin VNC viewer on the mac as the server does 
 not support authentication required by the MacOS Builting VNC viewer.  Use TigerVNC from brew (or add the missing vnc features.)
+
+
+The vnc server does not support **cutText** OP currently and will terminate when vnc client sends it
+
+With TigerVNC this can be disabled by setting **SendClipboard=false**
+```
+$  /Applications/TigerVNC.app/Contents/MacOS/vncviewer localhost:9000 SendClipboard=false
+```
 
 ## Linux Framebuffer Mode
 

@@ -39,6 +39,7 @@ func Load(path string, points float64) (*Font, error) {
 	})
 
 	return &Font{
-		Face: face,
+		Face:   face,
+		Height: int(face.Metrics().Height.Ceil()),
 	}, nil
 }

@@ -21,6 +21,10 @@ func (d *Display) Size() image.Point {
 	return image.Point{}
 }
 
+func (d *Display) Close() error {
+	return nil
+}
+
 func NewDisplay(device string) (*Display, error) {
 	return nil, fmt.Errorf("not supported on this platform")
 }

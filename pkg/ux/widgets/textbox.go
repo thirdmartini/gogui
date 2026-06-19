@@ -1,6 +1,8 @@
 package widgets
 
 import (
+	"fmt"
+
 	"github.com/thirdmartini/gogui/pkg/ux/canvas"
 	"github.com/thirdmartini/gogui/pkg/ux/canvas/color"
 	"github.com/thirdmartini/gogui/pkg/ux/canvas/fonts"
@@ -57,9 +59,11 @@ func (t *TextBox) SetBackground(bgColor color.Color) {
 
 func (t *TextBox) Draw(canvas canvas.Canvas) {
 	if t.visible {
-		canvas.DrawRect(t.x, t.y, t.w, t.h, t.BorderColor, t.BackgroundColor)
+		fmt.Printf(" + TextBox:Draw() %+v\n", t.BackgroundColor)
+		canvas.DrawRect(t.x, t.y, t.w, t.h, t.BackgroundColor, t.BackgroundColor)
 
 		if t.borderOpts&BorderLeft == BorderLeft {
+			fmt.Printf(" + BorderColor %+v\n", t.BorderColor)
 			canvas.DrawLine(t.x, t.y, t.x, t.y+t.h, t.BorderColor)
 		}
 
@@ -75,7 +79,10 @@ func (t *TextBox) Draw(canvas canvas.Canvas) {
 			canvas.DrawLine(t.x, t.y+t.h, t.x+t.w, t.y+t.h, t.BorderColor)
 		}
 
-		canvas.DrawText(t.x+2, t.y+2, t.text, t.Font, t.FontColor)
+		fmt.Printf(" + FontColor %+v %s %v/%v\n", t.FontColor, t.text, t.Font.Width, t.Font.Height)
+
+		canvas.DrawText(t.x, t.y+t.Font.Height, t.text, t.Font, t.FontColor)
+
 	}
 }
 

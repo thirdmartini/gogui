@@ -7,19 +7,19 @@ import (
 	"log"
 	"time"
 
-	"github.com/thirdmartini/gogui/pkg/app"
 	"github.com/thirdmartini/gogui/pkg/app/views"
 	"github.com/thirdmartini/gogui/pkg/app/widgets"
-	"github.com/thirdmartini/gogui/pkg/drivers/display/linux/drm"
-	"github.com/thirdmartini/gogui/pkg/drivers/input/controller/keyboard"
-	"github.com/thirdmartini/gogui/pkg/drivers/input/hid"
-	"github.com/thirdmartini/gogui/pkg/ux/themes"
-
 	"github.com/thirdmartini/gogui/pkg/drivers/display"
+	"github.com/thirdmartini/gogui/pkg/drivers/display/linux/drm"
 	"github.com/thirdmartini/gogui/pkg/drivers/display/linux/framebuffer"
 	"github.com/thirdmartini/gogui/pkg/drivers/display/vnc"
+	"github.com/thirdmartini/gogui/pkg/drivers/input/controller/keyboard"
+	"github.com/thirdmartini/gogui/pkg/drivers/input/hid"
 	"github.com/thirdmartini/gogui/pkg/ux"
 	"github.com/thirdmartini/gogui/pkg/ux/canvas"
+	"github.com/thirdmartini/gogui/pkg/ux/canvas/fonts"
+	"github.com/thirdmartini/gogui/pkg/ux/themes"
+	uxwidget "github.com/thirdmartini/gogui/pkg/ux/widgets"
 )
 
 type FrameBufferDevice struct {
@@ -66,13 +66,33 @@ func mustInitializeDemo(listenAddress string, width, height int) ([]display.Disp
 	return displays, events
 }
 
+type MainView struct {
+	DisplayCanvas *views.DisplayCanvas
+	Pager         *views.Pager
+}
+
+func (mv *MainView) Next() {
+	mv.Pager.Next()
+}
+
+func (mv *MainView) OnEvent(event *ux.Event) bool {
+	fmt.Printf("Event: %d\n", event.Kind)
+	return mv.Pager.OnEvent(event)
+}
+
+func (mv *MainView) OnRepaint() {
+	mv.Pager.Draw(mv.DisplayCanvas)
+	mv.DisplayCanvas.Show()
+}
+
 func main() {
 	driverFlag := flag.String("driver", "vnc", "display driver [vnc, framebuffer, drm]")
 	touchDeviceFlag := flag.String("touch", "/dev/input/by-id/usb-WaveShare_WaveShare_000000000089-event-if00", "path to touchscreen devicet")
 	flag.Parse()
 
-	var displays []display.Display
 	var events []ux.EventListener
+
+	var mainDisplay display.Display
 
 	switch *driverFlag {
 	case "vnc":
@@ -80,23 +100,26 @@ func main() {
 		// Start a vnc server that will act like the gui display
 		// this is nice and useful for testing the ui without a linux FB device
 		// note that VNC also provides an event source
-
+		var displays []display.Display
 		displays, events = mustInitializeDemo(":9000", 1480, 320)
+		mainDisplay = displays[0]
+
 	case "framebuffer":
-		// For this demo I'm using a RPI4 with an HDMI touch Display that is 320x1480 but I want to use it
-		// as a 1480x320 display
-		fbDevs := []FrameBufferDevice{
-			{
-				Device:   "/dev/fb0",
-				Width:    320,
-				Height:   1480,
-				Rotation: display.Rotation90,
-			},
+		device := FrameBufferDevice{
+			Device:   "/dev/fb0",
+			Width:    320,
+			Height:   1480,
+			Rotation: display.Rotation90,
 		}
-		displays, events = mustInitializeFramebuffers(fbDevs)
-		if len(displays) == 0 {
-			panic("no framebuffers found  ( try running with --vnc for a demo )")
+
+		d, err := framebuffer.Open(device.Device, device.Width, device.Height)
+		if err != nil {
+			panic(err)
 		}
+		// this forces rotation to 90 degrees, in my case I have a display that is 320x1480, but i want to use
+		// it flipped 90degrees and act as a 1480x320
+		d.WithRotation(device.Rotation)
+		mainDisplay = d
 
 	case "dri", "drm":
 		d, err := drm.NewDisplay("/dev/dri/card1")
@@ -104,17 +127,20 @@ func main() {
 			panic(err)
 		}
 		d.WithRotation(display.Rotation90)
-		displays = append(displays, d)
+		defer d.Close()
+
+		mainDisplay = d
+
 	default:
 		fmt.Errorf("Unknon driver %s\n", *driverFlag)
 	}
 
 	if *touchDeviceFlag != "" {
 		touch, err := hid.NewTouchScreen(*touchDeviceFlag)
-		touch.SetScaling(1480.0/4000.0, 320.0/4000.0)
 		if err != nil {
 			log.Printf("Warning: No touch device at %s (Err:%s)\n", *touchDeviceFlag, err)
 		} else {
+			touch.SetScaling(1480.0/4000.0, 320.0/4000.0)
 			events = append(events, touch)
 		}
 	}
@@ -133,32 +159,50 @@ func main() {
 	}
 
 	// create the application
-	c := &app.Controller{}
 
 	metric := NewMetrics()
 
-	for idx := range displays {
-		p := views.NewPager()
-		p.SetBackground(themes.LoadImage("background.png"))
-		p.Add(views.NewMainView())
-		p.Add(views.NewMeterView().Add(10, 10, &widgets.SpeedGauge{
-			Title:       "",
-			Width:       800,
-			Height:      300,
-			LeftMetrics: &metric.EdgeBandwidthIn,
-			LeftMax:     1024 * 1024 * 1024,
-			LeftLabel:   "DOWNLOAD",
+	p := views.NewPager()
+	p.SetBackground(themes.LoadImage("background.png"))
 
-			RightMetrics: &metric.EdgeBandwidthOut,
-			RightMax:     1024 * 1024 * 1024,
-			RightLabel:   "UPLOAD",
-
-			CenterMetric: metric.EdgePingAvg10s,
-			CenterMax:    50.0,
-		}))
-
-		c.AddViewPort(views.NewDisplayCanvas(displays[idx]), p)
+	mv := &MainView{
+		DisplayCanvas: views.NewDisplayCanvas(mainDisplay),
+		Pager:         p,
 	}
+
+	font, err := fonts.Load("assets/light/default.ttf", 30)
+
+	//p.Add(main)
+	main := views.NewMainView()
+	bt := uxwidget.NewButton(200, 200, 200, 40, ux.AlignLeft, "Click Me", font, themes.ColorTextMuted)
+	bt.BackgroundColor = themes.ColorBackground
+	bt.BorderColor = themes.ColorBorder
+	bt.SetBorder(uxwidget.BorderAll, themes.ColorTextPrimary)
+	bt.OnClick = func() bool {
+		fmt.Printf("[[Button Clicked]]\n")
+		mv.Next()
+		return true
+	}
+	main.AddWidget(bt)
+	p.Add(main)
+
+	p.Add(views.NewMeterView().Add(10, 10, &widgets.SpeedGauge{
+		Title:       "",
+		Width:       800,
+		Height:      300,
+		LeftMetrics: &metric.EdgeBandwidthIn,
+		LeftMax:     1024 * 1024 * 1024,
+		LeftLabel:   "DOWNLOAD",
+
+		RightMetrics: &metric.EdgeBandwidthOut,
+		RightMax:     1024 * 1024 * 1024,
+		RightLabel:   "UPLOAD",
+
+		CenterMetric: metric.EdgePingAvg10s,
+		CenterMax:    50.0,
+	}))
+
+	// viewports handle multiple displays and switching between which display receives input
 
 	app := ux.NewApplication()
 
@@ -195,5 +239,5 @@ func main() {
 		go events[idx].Listen(app.PostEvent)
 	}
 
-	app.Run(c)
+	app.Run(mv)
 }

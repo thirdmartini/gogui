@@ -16,6 +16,7 @@ type ViewPort interface {
 	Show()
 }
 
+// FIXME this is the same as widget.Widget
 type Window interface {
 	ux.Drawable
 	ux.EventHandler
@@ -68,11 +69,11 @@ func (c *Controller) OnRepaint() {
 
 func (c *Controller) OnEvent(event *ux.Event) bool {
 	// return true to always cause a repaint
-	fmt.Printf("Event: %+v\n", event)
 
 	switch event.Type {
 	case ux.EventTypeTouch:
 		fmt.Printf("Event: %d on %d  %+v\n", event.Kind, c.idx, event.Content.(*image.Point))
+		c.pagers[c.idx].OnEvent(event)
 
 	case ux.EventTypeKey:
 		fmt.Printf("Event: %d on %d\n", event.Kind, c.idx)
@@ -93,6 +94,8 @@ func (c *Controller) OnEvent(event *ux.Event) bool {
 
 		default:
 		}
+	default:
+		fmt.Printf("Unknown Event: %d on %d\n", event.Kind, c.idx)
 	}
 
 	return false
