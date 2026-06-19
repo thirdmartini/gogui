@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"image"
+	"log"
 	"time"
 
 	"github.com/thirdmartini/gogui/pkg/app"
@@ -11,6 +12,7 @@ import (
 	"github.com/thirdmartini/gogui/pkg/app/widgets"
 	"github.com/thirdmartini/gogui/pkg/drivers/display/linux/drm"
 	"github.com/thirdmartini/gogui/pkg/drivers/input/controller/keyboard"
+	"github.com/thirdmartini/gogui/pkg/drivers/input/hid"
 	"github.com/thirdmartini/gogui/pkg/ux/themes"
 
 	"github.com/thirdmartini/gogui/pkg/drivers/display"
@@ -66,6 +68,7 @@ func mustInitializeDemo(listenAddress string, width, height int) ([]display.Disp
 
 func main() {
 	driverFlag := flag.String("driver", "vnc", "display driver [vnc, framebuffer, drm]")
+	touchDeviceFlag := flag.String("touch", "/dev/input/by-id/usb-WaveShare_WaveShare_000000000089-event-if00", "path to touchscreen devicet")
 	flag.Parse()
 
 	var displays []display.Display
@@ -104,6 +107,16 @@ func main() {
 		displays = append(displays, d)
 	default:
 		fmt.Errorf("Unknon driver %s\n", *driverFlag)
+	}
+
+	if *touchDeviceFlag != "" {
+		touch, err := hid.NewTouchScreen(*touchDeviceFlag)
+		touch.SetScaling(1480.0/4000.0, 320.0/4000.0)
+		if err != nil {
+			log.Printf("Warning: No touch device at %s (Err:%s)\n", *touchDeviceFlag, err)
+		} else {
+			events = append(events, touch)
+		}
 	}
 
 	kb, err := keyboard.NewKeyboard()

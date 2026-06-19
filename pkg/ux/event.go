@@ -1,5 +1,7 @@
 package ux
 
+import "image"
+
 const (
 	ButtonNone  = 0
 	ButtonOne   = 1
@@ -16,6 +18,8 @@ const (
 	KeyPressDown  = 102
 	KeyPressLeft  = 103
 	KeyPressRight = 104
+
+	ScreenTouch = 201
 )
 
 const (
@@ -23,6 +27,7 @@ const (
 	EventTypeButton      = 0x2
 	EventTypeKey         = 0x3
 	EventTypeInput       = 0x4
+	EventTypeTouch       = 0x5
 	EventTypeApplication = 0x10
 	EventTypeUser        = 0x100
 )
@@ -49,5 +54,16 @@ func NewKeyPressEvent(key int) *Event {
 	return &Event{
 		Type: EventTypeKey,
 		Kind: uint64(key),
+	}
+}
+
+func NewTouchEvent(touchId int, x, y int) *Event {
+	return &Event{
+		Type: EventTypeTouch,
+		Kind: uint64(touchId),
+		Content: &image.Point{ // FIXME: use a dedicatted type?
+			X: x,
+			Y: y,
+		},
 	}
 }

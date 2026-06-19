@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"image"
 
 	"github.com/thirdmartini/gogui/pkg/app/views"
 	"github.com/thirdmartini/gogui/pkg/ux/themes"
@@ -70,11 +71,13 @@ func (c *Controller) OnEvent(event *ux.Event) bool {
 	fmt.Printf("Event: %+v\n", event)
 
 	switch event.Type {
+	case ux.EventTypeTouch:
+		fmt.Printf("Event: %d on %d  %+v\n", event.Kind, c.idx, event.Content.(*image.Point))
 
 	case ux.EventTypeKey:
+		fmt.Printf("Event: %d on %d\n", event.Kind, c.idx)
 		switch uint8(event.Kind) {
 		case ux.KeyPressUp, ux.KeyPressDown:
-			fmt.Printf("Event: %d on %d\n", event.Kind, c.idx)
 			if c.idx < len(c.vps) {
 				c.pagers[c.idx].OnEvent(event)
 			}
