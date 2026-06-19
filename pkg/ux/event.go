@@ -20,6 +20,8 @@ const (
 	KeyPressRight = 104
 
 	ScreenTouch = 201
+
+	EventKindQuit = 0
 )
 
 const (
@@ -65,5 +67,12 @@ func NewTouchEvent(touchId int, x, y int) *Event {
 			X: x,
 			Y: y,
 		},
+	}
+}
+
+func NewSystemEvent(kind uint64) *Event {
+	return &Event{
+		Type: EventTypeSystem,
+		Kind: kind,
 	}
 }

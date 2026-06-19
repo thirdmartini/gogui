@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"image"
+	"log"
 
 	"github.com/thirdmartini/gogui/pkg/ux"
 	"github.com/thirdmartini/gogui/pkg/ux/canvas/fonts"
@@ -22,7 +23,8 @@ func main() {
 		panic("no displays found  ( try running with --vnc for a demo )")
 	}
 	defer func() {
-		for _, d := range displays {
+		for id, d := range displays {
+			log.Printf("Closing display %d\n", id)
 			d.Close()
 		}
 	}()

@@ -2,6 +2,7 @@ package ux
 
 import (
 	"image"
+	"log"
 	"time"
 
 	"github.com/thirdmartini/gogui/pkg/ux/canvas"
@@ -63,6 +64,16 @@ func (app *Application) Run(ctrl ViewController, eventSources []EventListener) {
 			if !ok {
 				return // channel closed on us, exit the application
 			}
+
+			switch ev.Type {
+			case EventTypeSystem:
+				switch ev.Kind {
+				case EventKindQuit:
+					log.Printf("Quitting application")
+					return
+				}
+			}
+
 			if app.ctrl.OnEvent(ev) {
 				app.ctrl.OnRepaint()
 			}
@@ -71,11 +82,11 @@ func (app *Application) Run(ctrl ViewController, eventSources []EventListener) {
 }
 
 func (app *Application) Terminate() {
-	close(app.eventQueue)
+	app.PostEvent(NewSystemEvent(EventKindQuit))
 }
 
 func NewApplication() *Application {
 	return &Application{
-		eventQueue: make(chan *Event),
+		eventQueue: make(chan *Event, 128),
 	}
 }

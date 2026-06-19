@@ -1,8 +1,6 @@
 package keyboard
 
 import (
-	"os"
-
 	"github.com/eiannone/keyboard"
 
 	"github.com/thirdmartini/gogui/pkg/ux"
@@ -20,7 +18,8 @@ func (k *Keyboard) Listen(OnEvent func(ev *ux.Event)) error {
 
 		switch key {
 		case keyboard.KeyCtrlC:
-			os.Exit(0)
+			OnEvent(ux.NewSystemEvent(ux.EventKindQuit))
+
 		case keyboard.KeyArrowRight:
 			OnEvent(ux.NewKeyPressEvent(ux.KeyPressRight))
 		case keyboard.KeyArrowLeft:
