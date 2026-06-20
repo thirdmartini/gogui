@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"fmt"
@@ -20,7 +20,7 @@ type FrameBufferDevice struct {
 	Rotation int
 }
 
-func mustInitializeFramebuffers(fbDevices []FrameBufferDevice) ([]display.Display, []ux.EventListener) {
+func MustInitializeFramebuffers(fbDevices []FrameBufferDevice) ([]display.Display, []ux.EventListener) {
 	var displays []display.Display
 	var events []ux.EventListener
 
@@ -39,7 +39,7 @@ func mustInitializeFramebuffers(fbDevices []FrameBufferDevice) ([]display.Displa
 	return displays, events
 }
 
-func mustInitializeDemo(listenAddress string, width, height int) ([]display.Display, []ux.EventListener) {
+func MustInitializeDemo(listenAddress string, width, height int) ([]display.Display, []ux.EventListener) {
 	var displays []display.Display
 	var events []ux.EventListener
 
@@ -57,7 +57,7 @@ func mustInitializeDemo(listenAddress string, width, height int) ([]display.Disp
 	return displays, events
 }
 
-func mustInitializeHardware(displayDriver, touchDriver string) (displays []display.Display, events []ux.EventListener) {
+func MustInitializeHardware(displayDriver, touchDriver string) (displays []display.Display, events []ux.EventListener) {
 	switch displayDriver {
 	case "vnc":
 		// NOTE: this vnc server is really simple stupid but is compatible with TigerVNC
@@ -65,7 +65,7 @@ func mustInitializeHardware(displayDriver, touchDriver string) (displays []displ
 		// this is nice and useful for testing the ui without a linux FB device
 		// note that VNC also provides an event source
 
-		displays, events = mustInitializeDemo(":9000", 1480, 320)
+		displays, events = MustInitializeDemo(":9000", 1480, 320)
 
 	case "framebuffer":
 		// For this demo I'm using a RPI4 with an HDMI touch Display that is 320x1480

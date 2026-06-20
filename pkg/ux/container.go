@@ -2,6 +2,7 @@ package ux
 
 import (
 	"fmt"
+	"log"
 )
 
 // Container is a collection of widgets that directs user input
@@ -10,6 +11,7 @@ type Container struct {
 }
 
 func (c *Container) OnEvent(event *Event) bool {
+	log.Printf("Container.OnEvent: %v", event)
 	for _, w := range c.Widgets {
 		if w.OnEvent(event) {
 			return true

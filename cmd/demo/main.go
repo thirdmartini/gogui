@@ -6,6 +6,7 @@ import (
 	"image"
 	"log"
 
+	"github.com/thirdmartini/gogui/cmd"
 	"github.com/thirdmartini/gogui/pkg/ux"
 	"github.com/thirdmartini/gogui/pkg/ux/canvas/fonts"
 	"github.com/thirdmartini/gogui/pkg/ux/themes"
@@ -18,7 +19,7 @@ func main() {
 	flag.Parse()
 
 	// Initialize the hardware for our display device
-	displays, events := mustInitializeHardware(*driverFlag, *touchDeviceFlag)
+	displays, events := cmd.MustInitializeHardware(*driverFlag, *touchDeviceFlag)
 	if len(displays) == 0 {
 		panic("no displays found  ( try running with --vnc for a demo )")
 	}

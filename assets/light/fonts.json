@@ -3,6 +3,11 @@
     "Font": "default.ttf",
     "Size": 24
   },
+  "default:medium": {
+    "Font": "default.ttf",
+    "Size": 18
+  },
+
   "default:header": {
     "Font": "default.ttf",
     "Size": 16

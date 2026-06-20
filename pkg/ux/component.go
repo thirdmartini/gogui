@@ -8,6 +8,7 @@ import (
 
 // Component is a shared class that contains common properties used by the draw code
 type Component struct {
+	Name      string
 	R         image.Rectangle
 	IsVisible bool
 }
@@ -39,14 +40,16 @@ func (c *Component) OnEvent(_ *Event) bool {
 	return false
 }
 
-func NewComponent(r image.Rectangle) *Component {
+func NewComponent(name string, r image.Rectangle) *Component {
 	return &Component{
-		R: r,
+		Name: name,
+		R:    r,
 	}
 }
 
-func NewComponentD(x, y, w, h int) *Component {
+func NewComponentD(name string, x, y, w, h int) *Component {
 	return &Component{
-		R: image.Rect(x, y, x+w, y+h),
+		Name: name,
+		R:    image.Rect(x, y, x+w, y+h),
 	}
 }

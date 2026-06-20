@@ -26,8 +26,6 @@ func (w *Window) Draw(canvas canvas.Canvas) {
 	}
 	r := w.rect
 
-	// we may want a better way of doing this than clipping as this does not stack
-
 	canvas.ClipSet(r.Min.X, r.Min.Y, r.Dx(), r.Dy())
 	if w.background != nil {
 		canvas.DrawImage(r.Min.X, r.Min.Y, w.background)

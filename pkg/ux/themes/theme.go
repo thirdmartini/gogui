@@ -3,6 +3,7 @@ package themes
 import (
 	"encoding/json"
 	"image"
+	"log"
 	"os"
 	"path"
 
@@ -31,6 +32,7 @@ func (t *Theme) LoadImage(name string) image.Image {
 	imgPath := path.Join(t.path, name)
 	infile, err := os.Open(imgPath)
 	if err != nil {
+		log.Printf("Warning: error opening image %s: %s", imgPath, err)
 		return nil
 	}
 	defer infile.Close()
@@ -39,6 +41,7 @@ func (t *Theme) LoadImage(name string) image.Image {
 	// We just have to be sure all the image packages we want are imported.
 	src, _, err := image.Decode(infile)
 	if err != nil {
+		log.Printf("Warning: error opening image %s: %s", imgPath, err)
 		return nil
 	}
 	return src

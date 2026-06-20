@@ -1,0 +1,111 @@
+{
+  "Theme": "assets/light",
+  "Displays": [
+    "root"
+  ],
+  "Components": [
+    {
+      "Name": "root",
+      "Type": "ux.pager",
+      "Properties": {
+        "X": 0,
+        "Y": 0,
+        "Width": 1480,
+        "Height": 320
+      }
+    },
+    {
+      "Name": "main",
+      "Type": "ux.window",
+      "Parent": "root",
+      "Properties": {
+        "X": 0,
+        "Y": 0,
+        "Width": 1480,
+        "Height": 320,
+        "Background": "dashboard-01.png"
+      }
+    },
+    {
+      "Name": "text.0",
+      "Type": "ux.widget.textlabel",
+      "Parent": "main",
+      "Properties": {
+        "X": 740,
+        "Y": 160,
+        "Align": "center",
+        "Font": "default:large",
+        "Text": "Hello to Dashboard",
+        "ColorText": "text.primary",
+        "ColorBackground": "background"
+      }
+    },
+    {
+      "Name": "text.1",
+      "Type": "ux.widget.textlabel",
+      "Parent": "main",
+      "Properties": {
+        "X": 740,
+        "Y": 180,
+        "Align": "center",
+        "Font": "default:medium",
+        "Text": "Swipe Left or Right to change pages",
+        "ColorText": "text.primary",
+        "ColorBackground": "background"
+      }
+    },
+    {
+      "Name": "button.quit",
+      "Type": "ux.widget.button",
+      "Parent": "main",
+      "Properties": {
+        "X": 740,
+        "Y": 220,
+        "Width": 200,
+        "Height": 40,
+        "Align": "center",
+        "Text": "Quit",
+        "Font": "default:medium",
+        "ColorText": "text.primary",
+        "ColorBackground": "background"
+      }
+    },
+    {
+      "Name": "main2",
+      "Type": "ux.window",
+      "Parent": "root",
+      "Properties": {
+        "X": 0,
+        "Y": 0,
+        "Width": 1480,
+        "Height": 320,
+        "Background": "dashboard-02.png"
+      }
+    },
+    {
+      "Name": "grok.0",
+      "Type": "ux.widget.iconbutton",
+      "Parent": "main2",
+      "Properties": {
+        "X": 50,
+        "Y": 50,
+        "Width": 96,
+        "Height": 96,
+        "Icon": "grok.png"
+      }
+    },
+    {
+      "Name": "grok.1",
+      "Type": "ux.widget.iconbutton",
+      "Parent": "main2",
+      "Properties": {
+        "X": 160,
+        "Y": 50,
+        "Width": 96,
+        "Height": 96,
+        "Icon": "grok.png"
+      }
+    }
+  ]
+}
+

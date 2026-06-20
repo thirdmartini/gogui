@@ -3,6 +3,7 @@ package themes
 import (
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/thirdmartini/gogui/pkg/ux/canvas/color"
 )
@@ -49,6 +50,12 @@ type UserColorGroup struct {
 }
 
 func (ucg *UserColorGroup) GetColor(name string) color.Color {
+	if strings.HasPrefix(name, "#") {
+		if c, ok := ucg.byHex[name]; ok {
+			return c
+		}
+	}
+
 	if c, ok := ucg.byName[name]; ok {
 		return c
 	}

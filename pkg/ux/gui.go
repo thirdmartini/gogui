@@ -15,6 +15,10 @@ type Widget interface {
 	Drawable
 }
 
+type ContainerProvider interface {
+	AddWidget(name string, widget Widget) error
+}
+
 const (
 	AlignDefault = 0x0
 	AlignLeft    = 0x0
