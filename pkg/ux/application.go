@@ -1,6 +1,7 @@
 package ux
 
 import (
+	"fmt"
 	"image"
 	"log"
 	"time"
@@ -22,6 +23,7 @@ type ApplicationController interface {
 type Application struct {
 	eventQueue chan *Event
 	ctrl       ApplicationController
+	interval   time.Duration
 }
 
 func (app *Application) PostEvent(ev *Event) {
@@ -29,14 +31,26 @@ func (app *Application) PostEvent(ev *Event) {
 }
 
 func (app *Application) WithTheme(themeSource string) *Application {
-	themes.SetTheme("assets/light")
-	if err := themes.LoadColors(canvas.NewGGCanvas(image.NewRGBA(image.Rect(0, 0, 1, 1))).ColorPalette()); err != nil {
-		panic(err)
+	palette := canvas.NewGGCanvas(image.NewRGBA(image.Rect(0, 0, 1, 1))).ColorPalette()
+
+	theme, err := themes.Load(themeSource, palette)
+	if err != nil {
+		panic(fmt.Sprintf("failed to load theme %s", themeSource))
 	}
-	if err := themes.LoadFonts(); err != nil {
-		panic(err)
+	themes.SetTheme(theme)
+	return app
+}
+
+func (app *Application) WithRefreshRate(hz uint) *Application {
+	if hz == 0 {
+		return app
 	}
 
+	if hz > 1000 {
+		hz = 1000
+	}
+
+	app.interval = time.Duration(1000/hz) * time.Millisecond
 	return app
 }
 
@@ -56,7 +70,7 @@ func (app *Application) Run(ctrl ViewController, eventSources []EventListener) {
 	for {
 		select {
 		// Screen update interval
-		case <-time.After(time.Second):
+		case <-time.After(app.interval):
 			app.ctrl.OnRepaint()
 
 		// Handle UX or application events
@@ -87,6 +101,7 @@ func (app *Application) Terminate() {
 
 func NewApplication() *Application {
 	return &Application{
+		interval:   time.Second,
 		eventQueue: make(chan *Event, 128),
 	}
 }

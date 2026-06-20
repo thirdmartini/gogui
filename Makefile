@@ -11,3 +11,7 @@ all:
 rpi:
 	GOOS=linux GOARCH=arm64 go build -o build/demo.rpi github.com/thirdmartini/gogui/cmd/demo
 .PHONY: rpi
+
+run:
+	go run github.com/thirdmartini/gogui/cmd/demo
+.PHONY: run

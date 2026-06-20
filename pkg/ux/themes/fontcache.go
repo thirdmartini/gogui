@@ -4,8 +4,6 @@ import (
 	"github.com/thirdmartini/gogui/pkg/ux/canvas/fonts"
 )
 
-var DefaultCache = NewFontCache()
-
 type FontCache struct {
 	fonts map[string]*fonts.Font
 }

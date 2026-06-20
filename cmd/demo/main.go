@@ -39,9 +39,7 @@ func main() {
 	app := ux.NewApplication().WithTheme("assets/light")
 
 	mainWindow := ux.NewWindow(image.Rectangle{
-		Max: image.Point{
-			X: 800,
-			Y: mainDisplay.Size().X},
+		Max: mainDisplay.Size(),
 	})
 
 	mainWindow.SetBackground(themes.LoadImage("background.png"))
@@ -49,7 +47,7 @@ func main() {
 	font, _ := fonts.Load("assets/light/default.ttf", 30)
 
 	bt := widgets.NewButton(200, 200, 200, 40, ux.AlignLeft, "Click Me", font, themes.Default.Colors.TextPrimary)
-	bt.SetBorder(ux.BorderAll, themes.ColorTextPrimary)
+	bt.SetBorder(ux.BorderAll, themes.Default.Colors.TextPrimary)
 
 	bt.OnClick = func() bool {
 		fmt.Printf("[[Button Clicked]]\n")
@@ -63,6 +61,5 @@ func main() {
 	// start event handler
 
 	dc := ux.NewDisplayController(mainDisplay, mainWindow)
-
 	app.Run(dc, events)
 }
