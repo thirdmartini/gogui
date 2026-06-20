@@ -7,6 +7,7 @@ import (
 	"github.com/thirdmartini/gogui/pkg/ux"
 	"github.com/thirdmartini/gogui/pkg/ux/canvas"
 	"github.com/thirdmartini/gogui/pkg/ux/canvas/color"
+	"github.com/thirdmartini/gogui/pkg/ux/themes"
 )
 
 type IconButton struct {
@@ -97,8 +98,6 @@ func (b *IconButton) Visible(show bool) {
 }
 
 func NewIconButton(x, y, w, h int, icon image.Image) *IconButton {
-	palette := canvas.NewGGCanvas(image.NewRGBA(image.Rect(0, 0, 1, 1))).ColorPalette()
-
 	return &IconButton{
 		x:       x,
 		y:       y,
@@ -107,11 +106,11 @@ func NewIconButton(x, y, w, h int, icon image.Image) *IconButton {
 		icon:    icon,
 		visible: true,
 
-		BorderColor:     palette.NewRGB8(58, 123, 189),
-		BackgroundColor: palette.NewRGB8(91, 155, 213),
-		PressedColor:    palette.NewRGB8(45, 95, 150),
-		HighlightColor:  palette.NewRGB8(130, 180, 230),
-		ShadowColor:     palette.NewRGB8(35, 75, 120),
+		BorderColor:     themes.NewColor("iconbutton.border", "#3A7BBD"),
+		BackgroundColor: themes.NewColor("iconbutton.background", "#5B9BD5"),
+		PressedColor:    themes.NewColor("iconbutton.pressed", "#2D5F96"),
+		HighlightColor:  themes.NewColor("iconbutton.highlight", "#82B4E6"),
+		ShadowColor:     themes.NewColor("iconbutton.shadow", "#234B78"),
 		CornerRadius:    min(w, h) / 5,
 
 		OnTouch: func(pressed bool) bool {
