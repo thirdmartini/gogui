@@ -16,6 +16,11 @@ run:
 	go run github.com/thirdmartini/gogui/cmd/demo
 .PHONY: run
 
+
+runpi:
+	go run github.com/thirdmartini/gogui/cmd/demo --driver=drm
+.PHONY: runpi
+
 vnc:
 	/Applications/TigerVNC.app/Contents/MacOS/vncviewer localhost:9000 SendClipboard=false CursorType=system AlwaysCursor=true
 .PHONY: vnc

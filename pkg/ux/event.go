@@ -1,6 +1,8 @@
 package ux
 
-import "image"
+import (
+	"image"
+)
 
 const (
 	ButtonNone  = 0
@@ -19,7 +21,11 @@ const (
 	KeyPressLeft  = 103
 	KeyPressRight = 104
 
-	ScreenTouch = 201
+	ScreenTouch      = 201
+	ScreenSwipeRight = 202
+	ScreenSwipeLeft  = 203
+	ScreenSwipeUp    = 204
+	ScreenSwipeDown  = 205
 
 	EventKindQuit = 0
 )
@@ -66,6 +72,26 @@ func NewTouchEvent(touchId int, x, y int) *Event {
 		Content: &image.Point{ // FIXME: use a dedicatted type?
 			X: x,
 			Y: y,
+		},
+	}
+}
+
+type SwipeData struct {
+	StartX int
+	StartY int
+	EndX   int
+	EndY   int
+}
+
+func NewSwipeEvent(direction uint64, touchId int, startX, startY, endX, endY int) *Event {
+	return &Event{
+		Type: direction,
+		Kind: uint64(touchId),
+		Content: &SwipeData{
+			StartX: startX,
+			StartY: startY,
+			EndX:   endX,
+			EndY:   endY,
 		},
 	}
 }

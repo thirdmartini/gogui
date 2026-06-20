@@ -103,6 +103,7 @@ func mustInitializeHardware(displayDriver, touchDriver string) (displays []displ
 			log.Printf("Warning: No touch device at %s (Err:%s)\n", touchDriver, err)
 		} else {
 			touch.SetScaling(1480.0/4000.0, 320.0/4000.0)
+			touch.SetSwipeThreshold(100, 100)
 			events = append(events, touch)
 		}
 	}
