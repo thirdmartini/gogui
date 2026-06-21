@@ -68,23 +68,24 @@ func (p *Pager) OnEvent(event *Event) bool {
 	switch event.Type {
 	case ScreenSwipeLeft:
 		_ = p.Next()
+		return true
+
 	case ScreenSwipeRight:
 		_ = p.Prev()
+		return true
 
 	case EventTypeKey:
 		switch uint8(event.Kind) {
 		case KeyPressLeft: // Previous menu
 			_ = p.Prev()
+			return true
 
 		case KeyPressRight: // Next Menu
 			_ = p.Next()
-
-		default:
+			return true
 		}
-	default:
-		p.current.OnEvent(event)
 	}
-	return true
+	return p.current.OnEvent(event)
 }
 
 func (p *Pager) Draw(canvas canvas.Canvas) {
