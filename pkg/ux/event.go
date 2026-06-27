@@ -84,6 +84,7 @@ type SwipeData struct {
 }
 
 func NewSwipeEvent(direction uint64, touchId int, startX, startY, endX, endY int) *Event {
+	//log.Debugf("NewSwipeEvent: %d %d %d.%d %d.%d", direction, touchId, startX, startY, endX, endY)
 	return &Event{
 		Type: direction,
 		Kind: uint64(touchId),
@@ -101,4 +102,16 @@ func NewSystemEvent(kind uint64) *Event {
 		Type: EventTypeSystem,
 		Kind: kind,
 	}
+}
+
+func EventPoint(ev *Event) (image.Point, bool) {
+	if ev.Type == EventTypeTouch {
+		pt, ok := ev.Content.(*image.Point)
+		return *pt, ok
+	}
+
+	return image.Point{
+		X: -10000, // way off screen
+		Y: -10000,
+	}, false
 }

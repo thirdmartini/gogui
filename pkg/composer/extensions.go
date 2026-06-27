@@ -6,7 +6,7 @@ import (
 	"github.com/thirdmartini/gogui/pkg/ux"
 )
 
-type Constructor func(def *ComponentDefinition) (ux.Widget, error)
+type Constructor func(c *Composer, def *ComponentDefinition) (ux.Widget, error)
 
 var constructors = make(map[string]Constructor)
 

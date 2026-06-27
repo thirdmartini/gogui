@@ -3,12 +3,18 @@ package ux
 import (
 	"image"
 
+	"github.com/thirdmartini/gogui/pkg/log"
 	"github.com/thirdmartini/gogui/pkg/ux/canvas"
 	"github.com/thirdmartini/gogui/pkg/ux/canvas/color"
 	"github.com/thirdmartini/gogui/pkg/ux/themes"
 )
 
 var _ Container = (*Pager)(nil)
+
+const (
+	FlowDirectionHorizontal = iota
+	FlowDirectionVertical
+)
 
 type Pager struct {
 	*Component // for later shinanigans
@@ -18,13 +24,22 @@ type Pager struct {
 	background image.Image
 	current    Widget
 
+	direction int
+	wrap      bool
+
 	bgColor color.Color
 }
 
 func (p *Pager) Next() Widget {
 	idx := p.idx + 1
 	if idx >= len(p.views) {
-		idx = 0
+		if p.wrap {
+			idx = 0
+		} else {
+			log.Debugf("pager: no more pages")
+			idx = len(p.views) - 1
+		}
+
 	}
 	return p.Select(idx)
 }
@@ -32,7 +47,13 @@ func (p *Pager) Next() Widget {
 func (p *Pager) Prev() Widget {
 	idx := p.idx - 1
 	if idx < 0 {
-		idx = len(p.views) - 1
+		if p.wrap {
+			idx = len(p.views) - 1
+		} else {
+			log.Debugf("pager: no more pages")
+			idx = 0
+		}
+
 	}
 	return p.Select(idx)
 }
@@ -64,27 +85,73 @@ func (p *Pager) Add(w Widget) {
 	}
 }
 
-func (p *Pager) OnEvent(event *Event) bool {
+const (
+	ActionNone = iota
+	ActionNextHorizontal
+	ActionPrevHorizontal
+	ActionNextVertical
+	ActionPrevVertical
+)
+
+func (p *Pager) collapseAction(event *Event) int {
+	log.Debugf("collapseAction: %v", event)
 	switch event.Type {
 	case ScreenSwipeLeft:
-		_ = p.Next()
-		return true
+		return ActionNextHorizontal
 
 	case ScreenSwipeRight:
-		_ = p.Prev()
-		return true
+		return ActionPrevHorizontal
+
+	case ScreenSwipeUp:
+		return ActionNextVertical
+
+	case ScreenSwipeDown:
+		return ActionPrevVertical
 
 	case EventTypeKey:
 		switch uint8(event.Kind) {
 		case KeyPressLeft: // Previous menu
-			_ = p.Prev()
-			return true
+			return ActionPrevHorizontal
 
 		case KeyPressRight: // Next Menu
-			_ = p.Next()
-			return true
+			return ActionNextHorizontal
+
+		case KeyPressUp: // Previous menu
+			return ActionPrevVertical
+
+		case KeyPressDown: // Next Menu
+			return ActionNextVertical
 		}
 	}
+	return 0
+}
+
+func (p *Pager) OnEvent(event *Event) bool {
+	action := p.collapseAction(event)
+	if action != 0 {
+		switch p.direction {
+		case FlowDirectionHorizontal:
+			switch action {
+			case ActionNextHorizontal:
+				_ = p.Next()
+				return true
+			case ActionPrevHorizontal:
+				_ = p.Prev()
+				return true
+			}
+
+		case FlowDirectionVertical:
+			switch action {
+			case ActionNextVertical:
+				_ = p.Next()
+				return true
+			case ActionPrevVertical:
+				_ = p.Prev()
+				return true
+			}
+		}
+	}
+
 	return p.current.OnEvent(event)
 }
 
@@ -106,10 +173,20 @@ func (p *Pager) SetBackground(im image.Image) {
 	p.background = im
 }
 
+func (p *Pager) SetFlowDirection(direction int) {
+	p.direction = direction
+}
+
+func (p *Pager) SetWrap(wrap bool) {
+	p.wrap = wrap
+}
+
 func NewPager(name string, r image.Rectangle) *Pager {
 	p := &Pager{
 		Component: NewComponent(name, r),
 		bgColor:   themes.NewColor("background", "#000000"),
+		direction: FlowDirectionHorizontal,
+		wrap:      true,
 	}
 	return p
 }

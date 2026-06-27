@@ -82,7 +82,24 @@ func (c *Composer) construct(def *ComponentDefinition) (interface{}, error) {
 		widget = ux.NewPanel(def.Name, def.Rect(), themes.GetColor(def.Properties.ColorBackground))
 
 	case "ux.pager":
-		widget = ux.NewPager(def.Name, def.Rect())
+		pager := ux.NewPager(def.Name, def.Rect())
+		if def.Properties.Flow != "" {
+			switch def.Properties.Flow {
+			case "horizontal":
+				pager.SetFlowDirection(ux.FlowDirectionHorizontal)
+				pager.SetWrap(true)
+			case "horizontal;nowrap":
+				pager.SetFlowDirection(ux.FlowDirectionHorizontal)
+				pager.SetWrap(false)
+			case "vertical":
+				pager.SetFlowDirection(ux.FlowDirectionVertical)
+				pager.SetWrap(true)
+			case "vertical;nowrap":
+				pager.SetFlowDirection(ux.FlowDirectionVertical)
+				pager.SetWrap(false)
+			}
+		}
+		widget = pager
 
 	case "ux.window":
 		w := ux.NewWindow(def.Name, def.Rect())
@@ -97,7 +114,7 @@ func (c *Composer) construct(def *ComponentDefinition) (interface{}, error) {
 			return nil, err
 		}
 
-		widget, err = construct(def)
+		widget, err = construct(c, def)
 		if err != nil {
 			return nil, err
 		}

@@ -17,3 +17,10 @@ var remap = map[uint32]uint{
 	KeyboardPressLeft:  ux.KeyPressLeft,
 	KeyboardPressRight: ux.KeyPressRight,
 }
+
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}

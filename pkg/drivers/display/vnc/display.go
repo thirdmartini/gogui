@@ -33,6 +33,8 @@ type Display struct {
 	pointerX, pointerY int
 	buttons            uint8
 
+	swipeThresholdX, swipeThresholdY int
+
 	events chan interface{}
 }
 
@@ -124,6 +126,10 @@ func (r *Display) handleConn(c *Conn) { //, rec capture.ImageStream, rect image.
 	log.Printf("Client disconnected")
 }
 
+type Cursor struct {
+	x, y int
+}
+
 func (r *Display) Listen(OnEvent func(ev *ux.Event)) error {
 	r.events = make(chan interface{}, 100)
 	defer func() {
@@ -131,12 +137,19 @@ func (r *Display) Listen(OnEvent func(ev *ux.Event)) error {
 		close(r.events)
 	}()
 
+	modifiers := make(map[uint32]bool)
+
+	swipeStart := Cursor{0, 0}
+
 	for e := range r.events {
 		switch e.(type) {
 		case KeyEvent:
 			ve := e.(KeyEvent)
 			if ve.DownFlag == 1 {
+				modifiers[ve.Key] = true
 				if key, ok := remap[ve.Key]; ok {
+					log.Debugf("kb event: %#v -> %d", ve, key)
+
 					ev := &ux.Event{
 						Type: ux.EventTypeKey,
 						Kind: uint64(key),
@@ -145,6 +158,9 @@ func (r *Display) Listen(OnEvent func(ev *ux.Event)) error {
 				} else {
 					log.Debugf("kb event: %#v", ve)
 				}
+			} else {
+				delete(modifiers, ve.Key)
+				log.Debugf("kb event: %#v", ve)
 			}
 		case PointerEvent:
 			ve := e.(PointerEvent)
@@ -153,8 +169,40 @@ func (r *Display) Listen(OnEvent func(ev *ux.Event)) error {
 			r.pointerY = int(ve.Y)
 
 			if r.buttons != ve.ButtonMask {
-				if ve.ButtonMask == 0 {
-					OnEvent(ux.NewTouchEvent(0, r.pointerX, r.pointerY))
+				switch ve.ButtonMask {
+				case 0:
+					//log.Debugf("pointer event: %#v", ve)
+					// see if its a swipe event
+					swipeX := swipeStart.x - r.pointerX
+					swipeY := swipeStart.y - r.pointerY
+
+					if abs(swipeX) < r.swipeThresholdX {
+						swipeX = 0
+					}
+
+					if abs(swipeY) < r.swipeThresholdY {
+						swipeY = 0
+					}
+
+					if abs(swipeX) > abs(swipeY) {
+						if swipeX > 0 {
+							OnEvent(ux.NewSwipeEvent(ux.ScreenSwipeLeft, 0, swipeStart.x, swipeStart.y, r.pointerX, r.pointerY))
+						} else {
+							OnEvent(ux.NewSwipeEvent(ux.ScreenSwipeRight, 0, swipeStart.x, swipeStart.y, r.pointerX, r.pointerY))
+						}
+					} else if abs(swipeY) > abs(swipeX) {
+						if swipeY > 0 {
+							OnEvent(ux.NewSwipeEvent(ux.ScreenSwipeUp, 0, swipeStart.x, swipeStart.y, r.pointerX, r.pointerY))
+						} else {
+							OnEvent(ux.NewSwipeEvent(ux.ScreenSwipeDown, 0, swipeStart.x, swipeStart.y, r.pointerX, r.pointerY))
+						}
+					} else {
+						OnEvent(ux.NewTouchEvent(1, r.pointerX, r.pointerY))
+					}
+
+				case 1:
+					//log.Debugf("pointer event: %#v", ve)
+					swipeStart = Cursor{r.pointerX, r.pointerY}
 				}
 				r.buttons = ve.ButtonMask
 			}
@@ -227,10 +275,12 @@ func Open(address string, width, height int) (*Display, error) {
 	im := image.NewRGBA(rect)
 
 	r := &Display{
-		address: address,
-		width:   width,
-		height:  height,
-		image:   im,
+		address:         address,
+		width:           width,
+		height:          height,
+		image:           im,
+		swipeThresholdX: 10,
+		swipeThresholdY: 10,
 	}
 	r.signal = sync.NewCond(&r.lock)
 

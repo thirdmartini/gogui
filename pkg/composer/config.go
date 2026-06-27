@@ -22,11 +22,13 @@ type ComponentDefinition struct {
 		Y               int
 		Width           int
 		Height          int
+		Page            int
 		Align           string
 		Font            string
 		ColorText       string
 		ColorBackground string
 		Background      string
+		Flow            string
 		Icon            string
 		Icons           []string
 		Colors          []string
