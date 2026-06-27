@@ -14,7 +14,6 @@ type IconButton struct {
 	x, y, w, h int
 	icon       image.Image
 
-	pressed bool
 	visible bool
 
 	BorderColor     color.Color
@@ -31,22 +30,13 @@ func (b *IconButton) contains(px, py int) bool {
 	return px >= b.x && px < b.x+b.w && py >= b.y && py < b.y+b.h
 }
 
-func (b *IconButton) Pressed() bool {
-	return b.pressed
-}
-
-func (b *IconButton) SetPressed(pressed bool) {
-	b.pressed = pressed
-}
-
 func (b *IconButton) OnEvent(event *ux.Event) bool {
 	switch event.Type {
 	case ux.EventTypeTouch:
 		point := event.Content.(*image.Point)
 		if b.contains(point.X, point.Y) {
-			b.pressed = !b.pressed
 			if b.OnTouch != nil {
-				return b.OnTouch(b.pressed)
+				return b.OnTouch(true)
 			}
 			return true
 		}
@@ -61,11 +51,6 @@ func (b *IconButton) Draw(canvas canvas.Canvas) {
 
 	x, y := b.x, b.y
 	fill := b.BackgroundColor
-	if b.pressed {
-		x++
-		y++
-		fill = b.PressedColor
-	}
 
 	canvas.DrawRoundedRect(x, y, b.w, b.h, b.CornerRadius, b.BorderColor, fill)
 
@@ -86,10 +71,6 @@ func (b *IconButton) Draw(canvas canvas.Canvas) {
 		iconH := bounds.Dy()
 		ix := x + (b.w-iconW)/2
 		iy := y + (b.h-iconH)/2
-		if b.pressed {
-			ix++
-			iy++
-		}
 		canvas.DrawImage(ix, iy, b.icon)
 	}
 }
@@ -109,7 +90,6 @@ func NewIconButton(x, y, w, h int, icon image.Image) *IconButton {
 
 		BorderColor:     themes.NewColor("iconbutton.border", "#3A7BBD"),
 		BackgroundColor: themes.NewColor("iconbutton.background", "#5B9BD5"),
-		PressedColor:    themes.NewColor("iconbutton.pressed", "#2D5F96"),
 		HighlightColor:  themes.NewColor("iconbutton.highlight", "#82B4E6"),
 		ShadowColor:     themes.NewColor("iconbutton.shadow", "#234B78"),
 		CornerRadius:    min(w, h) / 5,

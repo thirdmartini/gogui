@@ -1,9 +1,12 @@
 package widgets
 
 import (
+	"image"
+
 	"github.com/thirdmartini/gogui/pkg/ux/canvas"
 	"github.com/thirdmartini/gogui/pkg/ux/canvas/color"
 	"github.com/thirdmartini/gogui/pkg/ux/canvas/fonts"
+	"github.com/thirdmartini/gogui/pkg/ux/themes"
 )
 
 type ScrollingTextBox struct {
@@ -25,7 +28,7 @@ func (t *ScrollingTextBox) Draw(canvas canvas.Canvas) {
 
 	idx := t.offset % uint64(len(t.text))
 
-	count := uint64(t.TextBox.Width()) / uint64(t.TextBox.Font.Width)
+	count := uint64(t.TextBox.W()) / uint64(t.TextBox.Font.Width)
 
 	t.TextBox.SetText(t.text[idx:])
 	t.TextBox.Draw(canvas)
@@ -36,9 +39,9 @@ func (t *ScrollingTextBox) Draw(canvas canvas.Canvas) {
 	}
 }
 
-func NewScrollingTextBox(x, y, w, h int, align uint8, text string, font *fonts.Font, color color.Color) *ScrollingTextBox {
+func NewScrollingTextBox(name string, r image.Rectangle, align uint8, text string, font *fonts.Font, color color.Color) *ScrollingTextBox {
 	return &ScrollingTextBox{
-		TextBox: NewTextBox(x, y, w, h, align, text, font, color),
+		TextBox: NewTextBox(name, r, align, text, font, color, themes.NewColor("textbox.background", "#FFFFFF")),
 		text:    text,
 	}
 }

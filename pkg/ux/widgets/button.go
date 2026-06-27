@@ -26,10 +26,6 @@ func (b *Button) Draw(canvas canvas.Canvas) {
 	if !b.IsVisible {
 		return
 	}
-	b.OnDraw(canvas)
-}
-
-func (b *Button) OnDraw(canvas canvas.Canvas) {
 	x, y, w, h := b.X(), b.Y(), b.W(), b.H()
 	if w <= 0 || h <= 0 {
 		return
@@ -42,17 +38,8 @@ func (b *Button) OnDraw(canvas canvas.Canvas) {
 	border := max(3, h/28)
 
 	borderColor := b.BorderColor
-	if borderColor == nil {
-		borderColor = themes.NewColor("button.border", "#47A952")
-	}
 	fillColor := b.BackgroundColor
-	if fillColor == nil {
-		fillColor = themes.NewColor("button.background", "#FFFFFF")
-	}
 	textColor := b.TextColor
-	if textColor == nil {
-		textColor = themes.NewColor("button.text", "#000000")
-	}
 
 	// Thick green border: outer fill then inset white fill.
 	canvas.DrawRoundedRect(x, y, w, h, r, borderColor, borderColor)

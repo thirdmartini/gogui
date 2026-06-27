@@ -40,6 +40,15 @@ func (w *Window) Draw(canvas canvas.Canvas) {
 	canvas.ClipReset()
 }
 
+func (c *Window) OnEvent(event *Event) bool {
+	for _, w := range c.Widgets {
+		if w.OnEvent(event) {
+			return true
+		}
+	}
+	return false
+}
+
 func (w *Window) Visible(show bool) {
 	w.visible = show
 }

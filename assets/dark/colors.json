@@ -1,17 +1,22 @@
 {
 	"background": "#000000",
 	"foreground": "#FFFFFF",
-	"text:primary":"#FFFFFF",
-	"text:muted": "#C8C8C8",
+	"text.primary":"#FFFFFF",
+	"text.muted": "#C8C8C8",
 	"border":"#DEDEDE",
+	"menu.background":"#202000",
 
-	"graph:axis:1": "#6699ff",
-	"graph:axis:2": "#ff4d4d",
-	"graph:axis:3": "#FFF333",
-	"graph:axis:4": "#006600",
-	"graph:axis:5": "#000000",
-	"graph:ticks": "#808080",
-	"menu:background":"#202000",
 
-    "ignore": "#000000"
+	"button.background": "#1C1C1C",
+	"button.border": "#5B9BD5",
+	"button.text": "#FFFFFF",
+
+	"panel.background": "#1C1C1C",
+	"textbox.background": "#1C1C1C",
+
+	"progressbar.foreground": "#5B9BD5",
+	"progressbar.background": "#858585",
+
+
+	"_": "#000000"
 }

@@ -1,31 +1,24 @@
 package widgets
 
 import (
+	"image"
+
 	"github.com/thirdmartini/gogui/pkg/ux"
 	"github.com/thirdmartini/gogui/pkg/ux/canvas"
 	"github.com/thirdmartini/gogui/pkg/ux/canvas/color"
 	"github.com/thirdmartini/gogui/pkg/ux/canvas/fonts"
-	"github.com/thirdmartini/gogui/pkg/ux/themes"
 )
 
 type TextBox struct {
-	text            string
-	FontColor       color.Color
-	BorderColor     color.Color
-	BackgroundColor color.Color
-	Font            *fonts.Font
+	*ux.Component
+	text      string
+	fontColor color.Color
+	bgColor   color.Color
+	Font      *fonts.Font
 
-	x          int
-	y          int
-	w          int
-	h          int
 	align      uint8
 	borderOpts uint8
 	visible    bool
-}
-
-func (t *TextBox) Width() int {
-	return t.w
 }
 
 func (t *TextBox) Align(align uint8) {
@@ -36,44 +29,16 @@ func (t *TextBox) SetText(text string) {
 	t.text = text
 }
 
-func (t *TextBox) SetFontColor(fg color.Color) {
-	t.FontColor = fg
-}
-
-func (t *TextBox) SetBorder(border uint8, borderColor color.Color) {
-	t.borderOpts = border
-	t.BorderColor = borderColor
-}
-
-func (t *TextBox) SetBackground(bgColor color.Color) {
-	t.BackgroundColor = bgColor
-}
-
 func (t *TextBox) Draw(canvas canvas.Canvas) {
 	if t.visible {
-		bgColor := themes.NewColor("background", "#000000")
-		borderColor := themes.NewColor("border", "#FFFFFF")
-		textColor := themes.NewColor("text.primary", "#FFFFFF")
+		x1, y1 := t.X(), t.Y()
+		fw, fh := t.Font.Measure(t.text)
 
-		canvas.DrawRect(t.x, t.y, t.w, t.h, bgColor, bgColor)
-
-		if t.borderOpts&ux.BorderLeft == ux.BorderLeft {
-			canvas.DrawLine(t.x, t.y, t.x, t.y+t.h, borderColor)
+		if t.bgColor != nil {
+			canvas.DrawRect(x1, y1, fw+20, fh+10, t.bgColor, t.bgColor)
 		}
 
-		if t.borderOpts&ux.BorderRight == ux.BorderRight {
-			canvas.DrawLine(t.x+t.w, t.y, t.x+t.w, t.y+t.h, borderColor)
-		}
-
-		if t.borderOpts&ux.BorderTop == ux.BorderTop {
-			canvas.DrawLine(t.x, t.y, t.x+t.w, t.y, borderColor)
-		}
-
-		if t.borderOpts&ux.BorderBottom == ux.BorderBottom {
-			canvas.DrawLine(t.x, t.y+t.h, t.x+t.w, t.y+t.h, borderColor)
-		}
-
-		canvas.DrawText(t.x, t.y+t.Font.Height, t.text, t.Font, textColor)
+		canvas.DrawText(x1+10, y1+fh+2, t.text, t.Font, t.fontColor)
 	}
 }
 
@@ -81,16 +46,15 @@ func (t *TextBox) Visible(show bool) {
 	t.visible = show
 }
 
-func NewTextBox(x, y, w, h int, align uint8, text string, font *fonts.Font, color color.Color) *TextBox {
+func NewTextBox(name string, r image.Rectangle, align uint8, text string, font *fonts.Font, color color.Color, bg color.Color) *TextBox {
 	return &TextBox{
+		Component: ux.NewComponent(name, r),
 		Font:      font,
-		FontColor: color,
-		x:         x,
-		y:         y,
-		w:         w,
-		h:         h,
+
 		text:      text,
 		align:     align,
 		visible:   true,
+		fontColor: color,
+		bgColor:   bg,
 	}
 }

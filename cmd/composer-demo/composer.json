@@ -1,5 +1,5 @@
 {
-  "Theme": "assets/light",
+  "Theme": "assets/dark",
   "Displays": [
     "root"
   ],
@@ -23,7 +23,7 @@
         "Y": 0,
         "Width": 1480,
         "Height": 320,
-        "Background": "dashboard-01.png"
+        "Background": "background.png"
       }
     },
     {
@@ -79,7 +79,7 @@
         "Y": 0,
         "Width": 1480,
         "Height": 320,
-        "Background": "dashboard-02.png"
+        "Background": "background.png"
       }
     },
     {
@@ -91,6 +91,7 @@
         "Y": 50,
         "Width": 96,
         "Height": 96,
+        "Text": "IconButton",
         "Icon": "grok.png"
       }
     },
@@ -103,8 +104,62 @@
         "Y": 50,
         "Width": 120,
         "Height": 96,
-        "Text": "Button 2",
+        "Text": "Button",
         "Icon": "grok.png"
+      }
+    },
+    {
+      "Name": "text.textlabel",
+      "Type": "ux.widget.textlabel",
+      "Parent": "main2",
+      "Properties": {
+        "X": 50,
+        "Y": 200,
+        "Align": "left",
+        "Font": "default:medium",
+        "Text": "TextLabel",
+        "ColorText": "text.primary",
+        "ColorBackground": "background"
+      }
+    },
+    {
+      "Name": "text.textbox",
+      "Type": "ux.widget.textbox",
+      "Parent": "main2",
+      "Properties": {
+        "X": 50,
+        "Y": 260,
+        "Align": "center",
+        "Font": "default:medium",
+        "Text": "TextBox",
+        "ColorText": "text.primary",
+        "ColorBackground": "textbox.background"
+      }
+    },
+    {
+      "Name": "panel.demo0",
+      "Type": "ux.panel",
+      "Parent": "main2",
+      "Properties": {
+        "X": 1170,
+        "Y": 10,
+        "Width": 300,
+        "Height": 300,
+        "ColorBackground": "panel.background"
+      }
+    },
+    {
+      "Name": "progressbar1",
+      "Type": "ux.widget.progressbar",
+      "Parent": "panel.demo0",
+      "Properties": {
+        "X": 1200,
+        "Y": 200,
+        "Width": 200,
+        "Height": 5
+      },
+      "Custom": {
+        "Progress": 25.0
       }
     }
   ]

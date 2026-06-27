@@ -47,6 +47,31 @@ func (c *Composer) construct(def *ComponentDefinition) (interface{}, error) {
 			themes.GetColor(def.Properties.ColorBackground),
 		)
 
+	case "ux.widget.textbox":
+		widget = widgets.NewTextBox(
+			def.Name,
+			def.Rect(),
+			alignValue(def.Properties.Align),
+			def.Properties.Text,
+			themes.Font(def.Properties.Font),
+			themes.GetColor(def.Properties.ColorText),
+			themes.GetColor(def.Properties.ColorBackground),
+		)
+
+	case "ux.widget.progressbar":
+		pb := widgets.NewProgressBar(
+			def.Name,
+			def.Rect(),
+		)
+
+		if v, ok := def.Custom["Progress"].(float64); ok {
+			pb.SetProgress(v)
+		}
+		widget = pb
+
+	case "ux.panel":
+		widget = ux.NewPanel(def.Name, def.Rect(), themes.GetColor(def.Properties.ColorBackground))
+
 	case "ux.pager":
 		widget = ux.NewPager(def.Name, def.Rect())
 
