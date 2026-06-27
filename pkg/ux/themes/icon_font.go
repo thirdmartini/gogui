@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"path"
 	"strconv"
 	"strings"
 
@@ -48,14 +49,16 @@ func (ifp *IconFontProvider) GetIcon(name string) Icon {
 	}
 }
 
-func NewIconFontProvider(path string, points float64) (*IconFontProvider, error) {
-	font, err := fonts.Load(path+".ttf", points)
+func NewIconFontProvider(fontPath string, points float64) (*IconFontProvider, error) {
+	font, err := fonts.Load(fontPath, points)
 	if err != nil {
 		panic(err)
 		return nil, err
 	}
 
-	codes, err := parseIconFile(path + ".codepoints")
+	codepointsPath := strings.TrimSuffix(fontPath, path.Ext(fontPath))
+
+	codes, err := parseIconFile(codepointsPath + ".codepoints")
 	if err != nil {
 		panic(err)
 		return nil, err

@@ -1,5 +1,5 @@
 {
-  "Theme": "assets/dark",
+  "Theme": "assets/dark.json",
   "Displays": [
     "root"
   ],

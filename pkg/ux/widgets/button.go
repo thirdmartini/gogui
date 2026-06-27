@@ -2,8 +2,8 @@ package widgets
 
 import (
 	"image"
-	"log"
 
+	"github.com/thirdmartini/gogui/pkg/log"
 	"github.com/thirdmartini/gogui/pkg/ux"
 	"github.com/thirdmartini/gogui/pkg/ux/canvas"
 	"github.com/thirdmartini/gogui/pkg/ux/canvas/color"
@@ -58,10 +58,10 @@ func (b *Button) Draw(canvas canvas.Canvas) {
 }
 
 func (b *Button) OnEvent(event *ux.Event) bool {
-	log.Printf("Button.OnEvent: %v", event)
 	switch event.Type {
 	case ux.EventTypeTouch:
 		if b.InsidePoint(*event.Content.(*image.Point)) && b.OnClick != nil {
+			log.Debugf("Button.OnEvent: %v", event)
 			return b.OnClick()
 		}
 	}
@@ -78,7 +78,7 @@ func NewButton(name string, r image.Rectangle, text string) *Button {
 		Font:            themes.Font("default:medium"),
 
 		OnClick: func() bool {
-			log.Printf("Button.OnClick")
+			log.Debugf("Button.OnClick")
 			return true
 		},
 	}

@@ -1,0 +1,50 @@
+{
+  "SearchOrder" : ["dark", "shared"],
+  "Fonts": {
+    "default:large": {
+      "Font": "default.ttf",
+      "Size": 24
+    },
+    "default:medium": {
+      "Font": "default.ttf",
+      "Size": 18
+    },
+    "default:header": {
+      "Font": "default.ttf",
+      "Size": 16
+    },
+    "default:dialog": {
+      "Font": "default.ttf",
+      "Size": 14
+    },
+    "default:graph-label": {
+      "Font": "default.ttf",
+      "Size": 12
+    }
+  },
+  "Colors": {
+    "background": "#000000",
+    "foreground": "#FFFFFF",
+    "text.primary":"#FFFFFF",
+    "text.muted": "#C8C8C8",
+    "border":"#DEDEDE",
+    "menu.background":"#202000",
+
+
+    "button.background": "#1C1C1C",
+    "button.border": "#5B9BD5",
+    "button.text": "#FFFFFF",
+
+    "panel.background": "#1C1C1C",
+    "textbox.background": "#1C1C1C",
+
+    "progressbar.foreground": "#5B9BD5",
+    "progressbar.background": "#858585",
+
+    "togglebutton.off": "#858585",
+    "togglebutton.on": "#5B9BD5",
+
+    "_": "#000000"
+  },
+  "FontIcons": "MaterialIcons-Regular.ttf"
+}

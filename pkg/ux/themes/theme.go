@@ -1,6 +1,7 @@
 package themes
 
 import (
+	"bytes"
 	"encoding/json"
 	"image"
 	"log"
@@ -11,11 +12,12 @@ import (
 )
 
 type Theme struct {
-	path       string
-	userColors *UserColorGroup
-	fonts      *FontCache
-	palette    color.Palette
-	icons      IconProvider
+	basePath    string
+	searchPaths []string
+	userColors  *UserColorGroup
+	fonts       *FontCache
+	palette     color.Palette
+	icons       IconProvider
 }
 
 // NewColor creates a new color object (or returns one from the color cache)
@@ -34,68 +36,88 @@ func (t *Theme) GetIcon(name string) Icon {
 }
 
 func (t *Theme) LoadImage(name string) image.Image {
-	imgPath := path.Join(t.path, name)
-	infile, err := os.Open(imgPath)
+	data, err := t.ReadFile(name)
 	if err != nil {
-		log.Printf("Warning: error opening image %s: %s", imgPath, err)
+		log.Printf("Warning: error opening image %s: %s", name, err)
 		return nil
 	}
-	defer infile.Close()
+
+	r := bytes.NewReader(data)
 
 	// Decode will figure out what type of image is in the file on its own.
 	// We just have to be sure all the image packages we want are imported.
-	src, _, err := image.Decode(infile)
+	src, _, err := image.Decode(r)
 	if err != nil {
-		log.Printf("Warning: error opening image %s: %s", imgPath, err)
+		log.Printf("Warning: error opening image %s: %s", name, err)
 		return nil
 	}
 	return src
 }
 
-func Load(themePath string, palette color.Palette) (*Theme, error) {
-	theme := &Theme{
-		path:       themePath,
-		palette:    palette,
-		userColors: NewColorsGroup(),
-		fonts:      NewFontCache(),
+func (t *Theme) ReadFile(name string) ([]byte, error) {
+	filePath, err := t.FindFile(name)
+	if err != nil {
+		return nil, err
 	}
+	return os.ReadFile(filePath)
+}
 
-	data, err := os.ReadFile(path.Join(themePath, "colors.json"))
+func (t *Theme) FindFile(name string) (string, error) {
+	for _, s := range t.searchPaths {
+		p := path.Join(t.basePath, s, name)
+		if _, err := os.Stat(p); err == nil {
+			return p, nil
+		}
+	}
+	return "", os.ErrNotExist
+}
+
+func Load(themePath string, palette color.Palette) (*Theme, error) {
+	data, err := os.ReadFile(themePath)
 	if err != nil {
 		return nil, err
 	}
 
-	tc := map[string]string{}
-	err = json.Unmarshal(data, &tc)
+	var themeConfig ThemeConfig
+	err = json.Unmarshal(data, &themeConfig)
+	if err != nil {
+		return nil, err
+	}
 
-	for k, v := range tc {
+	theme := &Theme{
+		basePath:    path.Dir(themePath),
+		searchPaths: themeConfig.SearchOrder,
+		palette:     palette,
+		userColors:  NewColorsGroup(),
+		fonts:       NewFontCache(),
+	}
+
+	for k, v := range themeConfig.Colors {
 		theme.NewColor(k, v)
 	}
 
-	data, err = os.ReadFile(path.Join(theme.path, "fonts.json"))
-	if err != nil {
-		return nil, err
-	}
-
-	fontConfig := make(map[string]struct {
-		Font string
-		Size float64
-	})
-
-	if err := json.Unmarshal(data, &fontConfig); err != nil {
-		return nil, err
-	}
-
-	for k, v := range fontConfig {
-		font := path.Join(theme.path, v.Font)
-		if err := theme.fonts.LoadFont(k, font, v.Size); err != nil {
+	for k, v := range themeConfig.Fonts {
+		fontPath, err := theme.FindFile(v.Font)
+		if err != nil {
+			return nil, err
+		}
+		if err := theme.fonts.LoadFont(k, fontPath, v.Size); err != nil {
 			return nil, err
 		}
 	}
 
-	theme.icons, err = NewIconFontProvider(path.Join(theme.path, "MaterialIcons-Regular"), 32)
-	if err != nil {
-		return nil, err
+	if themeConfig.FontIcons != "" {
+		filePath, err := theme.FindFile(themeConfig.FontIcons)
+		if err != nil {
+			return nil, err
+		}
+
+		theme.icons, err = NewIconFontProvider(filePath, 32)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		// no icons provider
 	}
 
 	return theme, nil

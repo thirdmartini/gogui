@@ -3,7 +3,6 @@ package themes
 import (
 	"fmt"
 	"image"
-	"path"
 
 	"github.com/thirdmartini/gogui/pkg/ux/canvas"
 	"github.com/thirdmartini/gogui/pkg/ux/canvas/color"
@@ -14,10 +13,12 @@ var Default *Theme
 
 func init() {
 	Default = &Theme{
-		palette:    canvas.NewGGCanvas(image.NewRGBA(image.Rect(0, 0, 1, 1))).ColorPalette(),
-		path:       path.Join("assets", "default"),
-		userColors: NewColorsGroup(),
-		fonts:      NewFontCache(),
+		palette: canvas.NewGGCanvas(image.NewRGBA(image.Rect(0, 0, 1, 1))).ColorPalette(),
+		//path:       path.Join("assets", "default"),
+
+		searchPaths: []string{"dark", "default"},
+		userColors:  NewColorsGroup(),
+		fonts:       NewFontCache(),
 	}
 }
 
