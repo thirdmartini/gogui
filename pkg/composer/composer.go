@@ -1,8 +1,7 @@
 package composer
 
 import (
-	"log"
-
+	"github.com/thirdmartini/gogui/pkg/log"
 	"github.com/thirdmartini/gogui/pkg/ux"
 )
 
@@ -18,7 +17,6 @@ func (c *Composer) Root(id uint) ux.Widget {
 	if id >= uint(len(c.root)) {
 		log.Panicf("invalid root id %d", id)
 	}
-
 	return c.GetWidget(c.root[id])
 }
 

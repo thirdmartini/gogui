@@ -2,8 +2,9 @@ package themes
 
 import (
 	"fmt"
-	"log"
 	"strings"
+
+	"github.com/thirdmartini/gogui/pkg/log"
 
 	"github.com/thirdmartini/gogui/pkg/ux/canvas/color"
 )
@@ -76,7 +77,7 @@ func (ucg *UserColorGroup) NewColor(palette color.Palette, name string, hex stri
 	}
 
 	c := mustMakeColor(palette, hex)
-	log.Printf("New color %s/%s\n", name, hex)
+	log.Debugf("New color %s/%s\n", name, hex)
 	ucg.byHex[hex] = c
 	ucg.byName[name] = c
 	return c

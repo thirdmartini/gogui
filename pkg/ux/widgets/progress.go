@@ -21,7 +21,7 @@ func (b *ProgressBar) SetProgress(progress float64) {
 }
 
 func (b *ProgressBar) Draw(canvas canvas.Canvas) {
-	if !b.IsVisible {
+	if !b.IsVisible() {
 		return
 	}
 

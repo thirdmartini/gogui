@@ -5,10 +5,11 @@ import (
 	"encoding/binary"
 	"fmt"
 	"image"
-	"log"
 	"net"
 	"strconv"
 	"sync"
+
+	"github.com/thirdmartini/gogui/pkg/log"
 )
 
 func newConn(c net.Conn, width, height uint16) *Conn {
@@ -124,7 +125,7 @@ func (c *Conn) serve() {
 	defer func() {
 		e := recover()
 		if e != nil {
-			log.Printf("Client disconnect: %v", e)
+			log.Warnf("Client disconnect: %v", e)
 		}
 	}()
 
@@ -135,7 +136,7 @@ func (c *Conn) serve() {
 		c.failf("reading client protocol version: %v", err)
 	}
 	ver := string(sl)
-	log.Printf("client wants: %q", ver)
+	log.Debugf("client wants: %q", ver)
 	switch ver {
 	case v3, v7, v8: // cool.
 	default:
@@ -148,7 +149,7 @@ func (c *Conn) serve() {
 		// Just 1 auth type supported: 1 (no auth)
 		cnt, _ := c.bw.WriteString("\x01\x01")
 		c.flush()
-		fmt.Printf("Sending Auth Version 7,8: %d\n", cnt)
+		log.Debugf("Sending Auth Version 7,8: %d\n", cnt)
 
 		wanted := c.readByte("6.1.2:client requested security-type")
 		if wanted != authNone {
@@ -156,11 +157,11 @@ func (c *Conn) serve() {
 		}
 	case v3:
 		// Old way. Just tell client we're doing no auth.
-		//fmt.Printf("Sending Auth Bytes: %x\n", uint32(authNone))
+		//fmt.Debugf("Sending Auth Bytes: %x\n", uint32(authNone))
 		//auth := uint32(authNone)
 		cnt, _ := c.bw.WriteString("\x00\x00\x00\x01")
 		c.flush()
-		fmt.Printf("Sending Auth Bytes: %d\n", cnt)
+		log.Debugf("Sending Auth Bytes: %d\n", cnt)
 		//		c.write("server.auth", uint32(authNone))
 		//c.flush()
 	}
@@ -172,12 +173,12 @@ func (c *Conn) serve() {
 		c.flush()
 	}
 
-	log.Printf("reading client init")
+	log.Debugf("reading client init")
 
 	// ClientInit
 	wantShared := c.readByte("shared-flag")
 
-	fmt.Printf("shared.flag: %d\n", wantShared)
+	log.Debugf("shared.flag: %d\n", wantShared)
 	_ = wantShared
 
 	c.format = PixelFormat{
@@ -280,7 +281,7 @@ func (c *Conn) pushFrame(ur FrameBufferUpdateRequest) {
 		b := im.Bounds()
 		width, height := b.Dx(), b.Dy()
 
-		// log.Printf("Client wants incremental update, sending none. %#v", ur)
+		// log.Debugf("Client wants incremental update, sending none. %#v", ur)
 		c.w(uint8(cmdFramebufferUpdate))
 		c.w(uint8(0))      // padding byte
 		c.w(uint16(1))     // no rectangles
@@ -313,7 +314,7 @@ func (c *Conn) pushImage(li *LockableImage) {
 	c.w(uint8(0))  // padding byte
 	c.w(uint16(1)) // 1 rectangle
 
-	//log.Printf("sending %d x %d pixels", width, height)
+	//log.Debugf("sending %d x %d pixels", width, height)
 
 	if c.format.TrueColour == 0 {
 		c.failf("only true-colour supported")
@@ -421,7 +422,7 @@ func (f *PixelFormat) isScreensThousands() bool {
 
 // 6.4.1
 func (c *Conn) handleSetPixelFormat() {
-	log.Printf("handling setpixel format")
+	log.Debugf("handling setpixel format")
 	c.readPadding("SetPixelFormat padding", 3)
 	var pf PixelFormat
 	c.read("pixelformat.bpp", &pf.BPP)
@@ -435,14 +436,14 @@ func (c *Conn) handleSetPixelFormat() {
 	c.read("pixelformat.greenshift", &pf.GreenShift)
 	c.read("pixelformat.blueshift", &pf.BlueShift)
 	c.readPadding("SetPixelFormat pixel format padding", 3)
-	log.Printf("Client wants pixel format: %#v", pf)
+	log.Debugf("Client wants pixel format: %#v", pf)
 	c.format = pf
 
 	// TODO: send PixelFormat event? would clients care?
 }
 
 func (c *Conn) handleGetPixelFormat() {
-	log.Printf("handling setpixel format")
+	log.Debugf("handling setpixel format")
 	var pf PixelFormat
 	c.read("pixelformat.bpp", &pf.BPP)
 	c.read("pixelformat.depth", &pf.Depth)
@@ -455,7 +456,7 @@ func (c *Conn) handleGetPixelFormat() {
 	c.read("pixelformat.greenshift", &pf.GreenShift)
 	c.read("pixelformat.blueshift", &pf.BlueShift)
 	c.readPadding("SetPixelFormat pixel format padding", 3)
-	log.Printf("Client wants pixel format: %#v", pf)
+	log.Debugf("Client wants pixel format: %#v", pf)
 	c.format = pf
 
 	// TODO: send PixelFormat event? would clients care?
@@ -473,7 +474,7 @@ func (c *Conn) handleSetEncodings() {
 		c.read("encoding-type", &t)
 		encType = append(encType, t)
 	}
-	log.Printf("Client encodings: %#v", encType)
+	log.Debugf("Client encodings: %#v", encType)
 
 }
 
@@ -511,7 +512,7 @@ func (c *Conn) handleUpdateRequest() {
 func (c *Conn) readString() string {
 	length := uint32(0)
 	c.read("string.len", &length)
-	fmt.Printf("string.len: %0x0\n", length)
+	log.Debugf("string.len: %0x0\n", length)
 
 	buffer := make([]byte, length, length)
 	c.read("string", buffer)

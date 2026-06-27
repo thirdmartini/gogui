@@ -8,21 +8,12 @@ import (
 )
 
 type Panel struct {
-	*Container
-	*Component
-
-	rect    image.Rectangle
-	visible bool
-
+	*BasicContainer
 	backgroundColor color.Color
 }
 
-func (p *Panel) OnEvent(event *Event) bool {
-	return p.Container.HandleEvent(event)
-}
-
 func (p *Panel) Draw(canvas canvas.Canvas) {
-	if !p.visible {
+	if !p.IsVisible() {
 		return
 	}
 
@@ -42,22 +33,13 @@ func (p *Panel) Draw(canvas canvas.Canvas) {
 	}
 	canvas.DrawRoundedRect(x+border, y+border, w-2*border, h-2*border, innerR, fillColor, fillColor)
 
-	for _, widget := range p.Widgets {
-		widget.Draw(canvas)
-	}
-}
-
-func (p *Panel) Visible(show bool) {
-	p.visible = show
+	p.BasicContainer.Draw(canvas)
 }
 
 func NewPanel(name string, rect image.Rectangle, bg color.Color) *Panel {
 	p := &Panel{
-		Container:       NewContainer(),
-		Component:       NewComponent(name, rect),
+		BasicContainer:  NewBasicContainer(name, rect),
 		backgroundColor: bg,
-		rect:            rect,
-		visible:         true,
 	}
 	return p
 }

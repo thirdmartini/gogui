@@ -2,10 +2,10 @@ package main
 
 import (
 	"flag"
-	"log"
 
 	"github.com/thirdmartini/gogui/cmd"
 	"github.com/thirdmartini/gogui/pkg/composer"
+	"github.com/thirdmartini/gogui/pkg/log"
 	"github.com/thirdmartini/gogui/pkg/ux"
 	"github.com/thirdmartini/gogui/pkg/ux/widgets"
 )
@@ -14,6 +14,8 @@ func main() {
 	driverFlag := flag.String("driver", "vnc", "display driver [vnc, framebuffer, drm]")
 	touchDeviceFlag := flag.String("touch", "/dev/input/by-id/usb-WaveShare_WaveShare_000000000089-event-if00", "path to touchscreen devicet")
 	flag.Parse()
+
+	log.Level |= log.DEBUG
 
 	// Initialize the hardware for our display device
 	displays, events := cmd.MustInitializeHardware(*driverFlag, *touchDeviceFlag)

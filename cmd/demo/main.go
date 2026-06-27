@@ -4,7 +4,8 @@ import (
 	"flag"
 	"fmt"
 	"image"
-	"log"
+
+	"github.com/thirdmartini/gogui/pkg/log"
 
 	"github.com/thirdmartini/gogui/cmd"
 	"github.com/thirdmartini/gogui/pkg/ux"
@@ -39,7 +40,7 @@ func main() {
 	//app, err := ux.NewApplication().WithTheme("assets/light")
 	app := ux.NewApplication().WithTheme("assets/light")
 
-	mainWindow := ux.NewWindow(image.Rectangle{
+	mainWindow := ux.NewWindow("main", image.Rectangle{
 		Max: mainDisplay.Size(),
 	})
 

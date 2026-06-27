@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"image"
 	"image/draw"
-	"log"
 	"net"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/thirdmartini/gogui/pkg/log"
 
 	"github.com/thirdmartini/gogui/pkg/drivers/display"
 	"github.com/thirdmartini/gogui/pkg/ux"
@@ -116,8 +117,7 @@ func (r *Display) handleConn(c *Conn) { //, rec capture.ImageStream, rect image.
 		select {
 		case r.events <- e:
 		default:
-			fmt.Println("don't panic")
-			log.Printf("ignored event: %#v", e)
+			log.Debugf("ignored event: %#v", e)
 		}
 	}
 	close(closec)
@@ -143,7 +143,7 @@ func (r *Display) Listen(OnEvent func(ev *ux.Event)) error {
 					}
 					OnEvent(ev)
 				} else {
-					log.Printf("kb event: %#v", ve)
+					log.Debugf("kb event: %#v", ve)
 				}
 			}
 		case PointerEvent:

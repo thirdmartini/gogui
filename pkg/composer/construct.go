@@ -2,7 +2,8 @@ package composer
 
 import (
 	"fmt"
-	"log"
+
+	"github.com/thirdmartini/gogui/pkg/log"
 
 	"github.com/thirdmartini/gogui/pkg/ux"
 	"github.com/thirdmartini/gogui/pkg/ux/themes"
@@ -12,9 +13,9 @@ import (
 // common construct for builtin components
 func (c *Composer) construct(def *ComponentDefinition) (interface{}, error) {
 
-	var parent ux.ContainerProvider
+	var parent ux.Container
 	if def.Parent != "" {
-		parent = c.Get(def.Parent).(ux.ContainerProvider)
+		parent = c.Get(def.Parent).(ux.Container)
 		if parent == nil {
 			return nil, fmt.Errorf("component[%s] wants parent[%s] which is not a container", def.Name, def.Parent)
 		}
@@ -84,7 +85,7 @@ func (c *Composer) construct(def *ComponentDefinition) (interface{}, error) {
 		widget = ux.NewPager(def.Name, def.Rect())
 
 	case "ux.window":
-		w := ux.NewWindow(def.Rect())
+		w := ux.NewWindow(def.Name, def.Rect())
 
 		if def.Properties.Background != "" {
 			w.SetBackground(themes.LoadImage(def.Properties.Background))
@@ -103,19 +104,18 @@ func (c *Composer) construct(def *ComponentDefinition) (interface{}, error) {
 	}
 
 	if parent != nil {
-		log.Printf("Adding widget %s to parent %s\n", def.Name, def.Parent)
 		err := parent.AddWidget(def.Name, widget)
 		if err != nil {
-			log.Panicf("Error adding widget %s to parent %s: %s\n", def.Name, def.Parent, err)
+			log.Panicf("Error adding widget %s to parent %s: %s", def.Name, def.Parent, err)
 		}
-
+		log.Debugf("Added widget %s to parent %s", def.WidgetString(), def.Parent)
 	} else {
-		log.Printf("Adding widget %s to parent %s\n", def.Name, def.Parent)
+		log.Debugf("Created widget %s", def.WidgetString())
 	}
 
 	return widget, nil
 }
 
 func (c *Composer) constructCustom(def ComponentDefinition) ux.Widget {
-	panic(fmt.Errorf("unknown component type: %s", def.Type))
+	panic(fmt.Errorf("unknown component type: %s", def.WidgetString()))
 }

@@ -58,6 +58,10 @@ func (c ComponentDefinition) Icons() []themes.Icon {
 	return icons
 }
 
+func (c ComponentDefinition) WidgetString() string {
+	return fmt.Sprintf("%s(%s)", c.Type, c.Name)
+}
+
 // ComposerConfig defines the configuration for setting up the UI composer, including theme, displays, and components.
 type ComposerConfig struct {
 	Theme      string // not supported yet

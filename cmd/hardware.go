@@ -1,8 +1,7 @@
 package cmd
 
 import (
-	"fmt"
-	"log"
+	"github.com/thirdmartini/gogui/pkg/log"
 
 	"github.com/thirdmartini/gogui/pkg/drivers/display"
 	"github.com/thirdmartini/gogui/pkg/drivers/display/linux/drm"
@@ -35,7 +34,7 @@ func MustInitializeFramebuffers(fbDevices []FrameBufferDevice) ([]display.Displa
 		displays = append(displays, d)
 	}
 
-	fmt.Printf("FB Acquired\n")
+	log.Debugf("Framebuffer Acquired\n")
 	return displays, events
 }
 
@@ -94,13 +93,13 @@ func MustInitializeHardware(displayDriver, touchDriver string) (displays []displ
 
 		displays = append(displays, d)
 	default:
-		fmt.Errorf("Unknonw driver %s\n", displayDriver)
+		log.Panicf("Unknown driver %s\n", displayDriver)
 	}
 
 	if touchDriver != "" {
 		touch, err := hid.NewTouchScreen(touchDriver)
 		if err != nil {
-			log.Printf("Warning: No touch device at %s (Err:%s)\n", touchDriver, err)
+			log.Warnf("Warning: No touch device at %s (Err:%s)\n", touchDriver, err)
 		} else {
 			touch.SetScaling(1480.0/4000.0, 320.0/4000.0)
 			touch.SetSwipeThreshold(100, 100)

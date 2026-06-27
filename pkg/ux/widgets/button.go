@@ -23,7 +23,7 @@ type Button struct {
 }
 
 func (b *Button) Draw(canvas canvas.Canvas) {
-	if !b.IsVisible {
+	if !b.IsVisible() {
 		return
 	}
 	x, y, w, h := b.X(), b.Y(), b.W(), b.H()

@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"image"
-	"log"
 	"os"
 	"path"
+
+	"github.com/thirdmartini/gogui/pkg/log"
 
 	"github.com/thirdmartini/gogui/pkg/ux/canvas/color"
 )
@@ -38,7 +39,7 @@ func (t *Theme) GetIcon(name string) Icon {
 func (t *Theme) LoadImage(name string) image.Image {
 	data, err := t.ReadFile(name)
 	if err != nil {
-		log.Printf("Warning: error opening image %s: %s", name, err)
+		log.Warnf("error opening image %s: %s", name, err)
 		return nil
 	}
 
@@ -48,7 +49,7 @@ func (t *Theme) LoadImage(name string) image.Image {
 	// We just have to be sure all the image packages we want are imported.
 	src, _, err := image.Decode(r)
 	if err != nil {
-		log.Printf("Warning: error opening image %s: %s", name, err)
+		log.Warnf("error opening image %s: %s", name, err)
 		return nil
 	}
 	return src

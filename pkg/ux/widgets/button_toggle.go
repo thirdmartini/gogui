@@ -2,7 +2,8 @@ package widgets
 
 import (
 	"image"
-	"log"
+
+	"github.com/thirdmartini/gogui/pkg/log"
 
 	"github.com/thirdmartini/gogui/pkg/ux"
 	"github.com/thirdmartini/gogui/pkg/ux/canvas"
@@ -29,7 +30,7 @@ func (b *ToggleButton) Toggle(state uint) {
 }
 
 func (b *ToggleButton) Draw(canvas canvas.Canvas) {
-	if !b.IsVisible {
+	if !b.IsVisible() {
 		return
 	}
 	x, y, w, h := b.X(), b.Y(), b.W(), b.H()
@@ -57,11 +58,10 @@ func (b *ToggleButton) Draw(canvas canvas.Canvas) {
 }
 
 func (b *ToggleButton) OnEvent(event *ux.Event) bool {
-	log.Printf("ToggleButton.OnEvent:%v   WTFFFFFF\n", event)
 	switch event.Type {
 	case ux.EventTypeTouch:
-		log.Printf("ToggleButton.OnEvent:%v in:%v\n", event, b.InsidePoint(*event.Content.(*image.Point)))
 		if b.InsidePoint(*event.Content.(*image.Point)) {
+			log.Debugf("ToggleButton.OnEvent:%v in:%v", event, b.InsidePoint(*event.Content.(*image.Point)))
 			b.state++
 			b.state = b.state % uint(len(b.colors))
 			return b.OnClick(b.state)
@@ -78,7 +78,7 @@ func NewToggleButton(name string, r image.Rectangle, colors []color.Color, icons
 		colors: colors,
 
 		OnClick: func(state uint) bool {
-			log.Printf("ToggleButton.OnClick:%v", state)
+			log.Debugf("ToggleButton.OnClick:%v", state)
 			return true
 		},
 	}

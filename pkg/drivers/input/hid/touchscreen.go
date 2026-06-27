@@ -2,7 +2,8 @@ package hid
 
 import (
 	"fmt"
-	"log"
+
+	"github.com/thirdmartini/gogui/pkg/log"
 
 	"github.com/thirdmartini/gogui/pkg/ux"
 )
@@ -47,7 +48,7 @@ func (t *TouchScreen) poll(e chan TouchEvent) error {
 			return err
 		}
 
-		//log.Printf("%s:%s:: %+v\n", ev.TypeString(), ev.CodeString(), ev)
+		//log.Debugf("%s:%s:: %+v\n", ev.TypeString(), ev.CodeString(), ev)
 
 		switch ev.Type {
 		case EV_KEY:
@@ -55,7 +56,7 @@ func (t *TouchScreen) poll(e chan TouchEvent) error {
 			case BTN_TOUCH:
 				e <- TouchEvent{Type: ev.Value, X: CurrentX, Y: CurrentY}
 			default:
-				log.Printf("EV_KEY:unknown key event %d", ev.Code)
+				log.Warnf("EV_KEY:unknown key event %d", ev.Code)
 			}
 
 		case EV_ABS:
@@ -67,13 +68,13 @@ func (t *TouchScreen) poll(e chan TouchEvent) error {
 				CurrentY = ev.Value
 
 			default:
-				//log.Printf("EV_ABS:unknown key event", ev.Code)
+				log.Debugf("EV_ABS:unknown key event", ev.Code)
 			}
 		case EV_SYN:
-			//log.Printf("EV_SYNC:unknown key event", ev.Code)
+			log.Debugf("EV_SYNC:unknown key event", ev.Code)
 
 		default:
-			//log.Printf("unknown event type", ev.Type)
+			log.Debugf("unknown event type", ev.Type)
 		}
 	}
 }

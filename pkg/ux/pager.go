@@ -8,7 +8,7 @@ import (
 	"github.com/thirdmartini/gogui/pkg/ux/themes"
 )
 
-var _ ContainerProvider = (*Pager)(nil)
+var _ Container = (*Pager)(nil)
 
 type Pager struct {
 	*Component // for later shinanigans

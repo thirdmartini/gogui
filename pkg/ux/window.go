@@ -12,19 +12,15 @@ type PhysicalRect struct {
 }
 
 type Window struct {
-	*Container
-
-	rect    image.Rectangle
-	visible bool
-
+	*BasicContainer
 	background image.Image
 }
 
 func (w *Window) Draw(canvas canvas.Canvas) {
-	if !w.visible {
+	if !w.IsVisible() {
 		return
 	}
-	r := w.rect
+	r := w.Rect()
 
 	canvas.ClipSet(r.Min.X, r.Min.Y, r.Dx(), r.Dy())
 	if w.background != nil {
@@ -34,28 +30,17 @@ func (w *Window) Draw(canvas canvas.Canvas) {
 		canvas.DrawRect(r.Min.X, r.Min.Y, r.Dx(), r.Dx(), bgColor, bgColor)
 	}
 
-	for _, widget := range w.Widgets {
-		widget.Draw(canvas)
-	}
+	w.BasicContainer.Draw(canvas)
 	canvas.ClipReset()
-}
-
-func (c *Window) OnEvent(event *Event) bool {
-	return c.Container.HandleEvent(event)
-}
-
-func (w *Window) Visible(show bool) {
-	w.visible = show
 }
 
 func (w *Window) SetBackground(im image.Image) {
 	w.background = im
 }
 
-func NewWindow(rect image.Rectangle) *Window {
+func NewWindow(name string, rect image.Rectangle) *Window {
 	w := &Window{
-		Container: NewContainer(),
-		rect:      rect,
+		BasicContainer: NewBasicContainer(name, rect),
 	}
 	return w
 }

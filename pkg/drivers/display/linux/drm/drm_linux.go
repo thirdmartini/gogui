@@ -193,8 +193,9 @@ import "C"
 import (
 	"fmt"
 	"image"
-	"log"
 	"unsafe"
+
+	"github.com/thirdmartini/gogui/pkg/log"
 
 	"github.com/thirdmartini/gogui/pkg/drivers/display"
 )
@@ -223,7 +224,7 @@ func (d *Display) createFrameBuffers() error {
 			panic("failed to initialize frame buffers")
 		}
 
-		log.Printf("FB:%d -> %d %v %v\n", idx, d.fbs[idx].fb_id, d.fbs[idx].mem, d.fbs[idx].length)
+		log.Debugf("FB:%d -> %d %v %v\n", idx, d.fbs[idx].fb_id, d.fbs[idx].mem, d.fbs[idx].length)
 	}
 	return nil
 }

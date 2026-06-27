@@ -2,7 +2,8 @@ package widgets
 
 import (
 	"image"
-	"log"
+
+	"github.com/thirdmartini/gogui/pkg/log"
 
 	"github.com/thirdmartini/gogui/pkg/ux"
 	"github.com/thirdmartini/gogui/pkg/ux/canvas"
@@ -23,7 +24,7 @@ type IconButton struct {
 	ShadowColor     color.Color
 	CornerRadius    int
 
-	OnTouch func(pressed bool) bool
+	OnClick func(pressed bool) bool
 }
 
 func (b *IconButton) contains(px, py int) bool {
@@ -35,8 +36,8 @@ func (b *IconButton) OnEvent(event *ux.Event) bool {
 	case ux.EventTypeTouch:
 		point := event.Content.(*image.Point)
 		if b.contains(point.X, point.Y) {
-			if b.OnTouch != nil {
-				return b.OnTouch(true)
+			if b.OnClick != nil {
+				return b.OnClick(true)
 			}
 			return true
 		}
@@ -94,8 +95,8 @@ func NewIconButton(x, y, w, h int, icon image.Image) *IconButton {
 		ShadowColor:     themes.NewColor("iconbutton.shadow", "#234B78"),
 		CornerRadius:    min(w, h) / 5,
 
-		OnTouch: func(pressed bool) bool {
-			log.Printf("IconButton.OnTouch: pressed=%v", pressed)
+		OnClick: func(pressed bool) bool {
+			log.Debugf("IconButton.OnTouch: pressed=%v", pressed)
 			return true
 		},
 	}

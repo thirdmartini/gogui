@@ -6,7 +6,7 @@ import (
 	"image"
 	"image/draw"
 	"image/png"
-	"log"
+	"github.com/thirdmartini/gogui/pkg/log"
 	"net/http"
 	"strconv"
 

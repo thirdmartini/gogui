@@ -3,7 +3,7 @@ package ux
 import (
 	"fmt"
 	"image"
-	"log"
+	"github.com/thirdmartini/gogui/pkg/log"
 	"time"
 
 	"github.com/thirdmartini/gogui/pkg/ux/canvas"

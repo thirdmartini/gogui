@@ -15,7 +15,7 @@ type Widget interface {
 	Drawable
 }
 
-type ContainerProvider interface {
+type Container interface {
 	AddWidget(name string, widget Widget) error
 }
 
