@@ -27,7 +27,8 @@ const (
 	ScreenSwipeUp    = 204
 	ScreenSwipeDown  = 205
 
-	EventKindQuit = 0
+	SysEventKindQuit       = 0
+	SysEventKindInvalidate = 1
 )
 
 const (

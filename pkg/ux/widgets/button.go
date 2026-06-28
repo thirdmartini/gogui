@@ -35,20 +35,21 @@ func (b *Button) Draw(canvas canvas.Canvas) {
 	if r > w/2 {
 		r = w / 2
 	}
-	border := max(3, h/28)
+	//border := max(3, h/28)
 
 	borderColor := b.BorderColor
 	fillColor := b.BackgroundColor
 	textColor := b.TextColor
 
 	// Thick green border: outer fill then inset white fill.
-	canvas.DrawRoundedRect(x, y, w, h, r, borderColor, borderColor)
 
-	innerR := r - border
-	if innerR < 0 {
-		innerR = 0
-	}
-	canvas.DrawRoundedRect(x+border, y+border, w-2*border, h-2*border, innerR, fillColor, fillColor)
+	/*
+		innerR := r - border
+		if innerR < 0 {
+			innerR = 0
+		}*/
+	canvas.DrawRoundedRect(x, y, w, h, r, fillColor, fillColor)
+	canvas.DrawRoundedRect(x, y, w, h, r, borderColor, nil)
 
 	if b.Font != nil && b.Font.Face != nil && b.text != "" {
 		//_,  := b.Font.Measure(b.text)

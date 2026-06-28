@@ -3,6 +3,7 @@ package ux
 import (
 	"image"
 
+	"github.com/thirdmartini/gogui/pkg/log"
 	"github.com/thirdmartini/gogui/pkg/ux/canvas"
 )
 
@@ -46,6 +47,7 @@ func (c *Component) Rect() image.Rectangle {
 }
 
 func (c *Component) Visible(show bool) {
+	log.Debugf("Component %s visible %v", c.name, show)
 	c.isVisible = show
 }
 

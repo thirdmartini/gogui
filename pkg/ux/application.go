@@ -104,7 +104,11 @@ func (app *Application) Run(ctrl ViewController, eventSources []EventListener) {
 			switch ev.Type {
 			case EventTypeSystem:
 				switch ev.Kind {
-				case EventKindQuit:
+				case SysEventKindInvalidate:
+					app.repaint()
+					continue
+
+				case SysEventKindQuit:
 					log.Printf("Quitting application")
 					return
 				}
@@ -118,7 +122,7 @@ func (app *Application) Run(ctrl ViewController, eventSources []EventListener) {
 }
 
 func (app *Application) Terminate() {
-	app.PostEvent(NewSystemEvent(EventKindQuit))
+	app.PostEvent(NewSystemEvent(SysEventKindQuit))
 }
 
 func NewApplication() *Application {
