@@ -94,6 +94,8 @@ func (app *Application) Run(ctrl ViewController, eventSources []EventListener) {
 
 		case <-ticker.C:
 			log.Debugf("REPAINT: %s / %d  avg: %s", app.Stats.RepaintTime, app.Stats.RepaintCount, app.Stats.RepaintTime/time.Duration(app.Stats.RepaintCount))
+			app.Stats.RepaintTime = 0
+			app.Stats.RepaintCount = 0
 
 		// Handle UX or application events
 		case ev, ok := <-app.eventQueue:

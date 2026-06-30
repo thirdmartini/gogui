@@ -29,6 +29,8 @@ const (
 
 	SysEventKindQuit       = 0
 	SysEventKindInvalidate = 1
+	SysEventKindShow       = 2
+	SysEventKindHide       = 3
 )
 
 const (
